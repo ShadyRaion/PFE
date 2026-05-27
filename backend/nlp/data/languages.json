@@ -1,0 +1,35 @@
+{
+  "languages": [
+    {"canonical": "English", "aliases": ["english", "anglais", "inglese", "ingles"]},
+    {"canonical": "French", "aliases": ["french", "francais", "français"]},
+    {"canonical": "Arabic", "aliases": ["arabic", "arabe", "arabia"]},
+    {"canonical": "Spanish", "aliases": ["spanish", "espagnol", "espanol", "español"]},
+    {"canonical": "German", "aliases": ["german", "allemand", "deutsch"]},
+    {"canonical": "Italian", "aliases": ["italian", "italien", "italiano"]},
+    {"canonical": "Portuguese", "aliases": ["portuguese", "portugais", "portugues"]},
+    {"canonical": "Chinese", "aliases": ["chinese", "chinois", "mandarin"]},
+    {"canonical": "Japanese", "aliases": ["japanese", "japonais"]},
+    {"canonical": "Russian", "aliases": ["russian", "russe"]},
+    {"canonical": "Turkish", "aliases": ["turkish", "turc"]},
+    {"canonical": "Dutch", "aliases": ["dutch", "neerlandais", "néerlandais"]}
+  ],
+  "levels": {
+    "Native": ["native", "natal", "mother tongue", "mothertongue", "langue maternelle", "maternelle", "natif", "native speaker"],
+    "Bilingual": ["bilingue", "bilingual"],
+    "Fluent": ["fluent", "courant", "courante", "couramment", "fluently"],
+    "Professional": ["professional", "professionnel", "professionnelle", "professional working"],
+    "Advanced": ["advanced", "avance", "avancé", "advanced level", "c1", "c2", "tres bon niveau", "tres bonne maitrise"],
+    "Upper-Intermediate": ["upper intermediate", "upper-intermediate", "b2", "bonne maitrise", "bonne maîtrise"],
+    "Intermediate": ["intermediate", "intermediaire", "intermédiaire", "b1", "moyen", "niveau moyen"],
+    "Elementary": ["elementary", "elementaire", "élémentaire", "a2", "notions", "basic", "basique"],
+    "Beginner": ["beginner", "debutant", "débutant", "a1", "novice"]
+  },
+  "cefr_map": {
+    "a1": "Beginner",
+    "a2": "Elementary",
+    "b1": "Intermediate",
+    "b2": "Upper-Intermediate",
+    "c1": "Advanced",
+    "c2": "Advanced"
+  }
+}

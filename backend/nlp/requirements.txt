@@ -1,0 +1,5 @@
+sentence-transformers
+numpy
+rapidfuzz>=3.0
+langdetect>=1.0.9
+pdfminer.six>=20221105

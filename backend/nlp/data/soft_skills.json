@@ -1,0 +1,26 @@
+{
+  "soft_skills": [
+    {"canonical": "Communication", "aliases": ["communication", "communication skills", "communication ecrite", "communication orale"]},
+    {"canonical": "Teamwork", "aliases": ["teamwork", "team work", "team player", "esprit d equipe", "travail en equipe", "travail d equipe"]},
+    {"canonical": "Leadership", "aliases": ["leadership", "leader", "management d equipe"]},
+    {"canonical": "Problem Solving", "aliases": ["problem solving", "problem-solving", "resolution de problemes"]},
+    {"canonical": "Critical Thinking", "aliases": ["critical thinking", "esprit critique", "pensee critique"]},
+    {"canonical": "Adaptability", "aliases": ["adaptability", "adaptable", "adaptabilite"]},
+    {"canonical": "Creativity", "aliases": ["creativity", "creative", "creativite"]},
+    {"canonical": "Time Management", "aliases": ["time management", "gestion du temps"]},
+    {"canonical": "Organization", "aliases": ["organization", "organized", "organise", "sens de l organisation"]},
+    {"canonical": "Attention to Detail", "aliases": ["attention to detail", "detail oriented", "souci du detail", "rigueur"]},
+    {"canonical": "Autonomy", "aliases": ["autonomy", "autonomous", "autonome", "autonomie"]},
+    {"canonical": "Initiative", "aliases": ["initiative", "esprit d initiative", "force de proposition"]},
+    {"canonical": "Negotiation", "aliases": ["negotiation", "negociation"]},
+    {"canonical": "Presentation Skills", "aliases": ["presentation skills", "public speaking", "prise de parole"]},
+    {"canonical": "Customer Service", "aliases": ["customer service", "client service", "service client", "relation client"]},
+    {"canonical": "Conflict Resolution", "aliases": ["conflict resolution", "gestion des conflits"]},
+    {"canonical": "Decision Making", "aliases": ["decision making", "prise de decision"]},
+    {"canonical": "Analytical Thinking", "aliases": ["analytical thinking", "analytical skills", "esprit analytique", "capacite d analyse"]},
+    {"canonical": "Interpersonal Skills", "aliases": ["interpersonal skills", "interpersonal", "relationnel", "sens du relationnel"]},
+    {"canonical": "Stress Management", "aliases": ["stress management", "gestion du stress", "resistance au stress"]},
+    {"canonical": "Empathy", "aliases": ["empathy", "empathie"]},
+    {"canonical": "Mentoring", "aliases": ["mentoring", "coaching", "mentorat"]}
+  ]
+}

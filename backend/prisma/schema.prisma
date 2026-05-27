@@ -1,0 +1,386 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  STUDENT
+  COMPANY_SUPERVISOR
+  ADMIN
+}
+
+enum SupervisorStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum ApplicationStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  AFFECTED
+  COMPLETED
+  CANCELLED
+}
+
+enum BinomeStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+  CANCELLED
+}
+
+enum ConversationType {
+  APPLICATION
+  BINOME
+}
+
+enum EducationField {
+  INFORMATION_TECHNOLOGY
+  FINANCE_ACCOUNTING
+  DATA_ANALYSIS_BI
+  MANAGEMENT_HR
+  MARKETING_COMMUNICATION
+}
+
+model User {
+  id       String @id @default(uuid())
+  fullName String
+  email    String @unique
+  password String
+  role     Role
+
+  university String?
+  specialty  String?
+  phone      String?
+
+  educationField EducationField?
+
+  supervisorStatus SupervisorStatus?
+
+  // Student-specific profile fields (used when role = STUDENT)
+  degreeLevel         String?
+  academicYear        String?
+  internshipType      String?
+  internshipStartDate DateTime?
+  desiredDuration     String?
+
+  // Supervisor-specific profile fields (used when role = COMPANY_SUPERVISOR)
+  department String?
+  rank       String?
+  division   String?
+
+  studentConversations    Conversation[] @relation("StudentConversation")
+  supervisorConversations Conversation[] @relation("SupervisorConversation")
+  messages                Message[]
+
+  applications  Application[]  @relation("StudentApplications")
+  subjects      Subject[]
+  cvs           CV[]
+  auditLogs     AuditLog[]
+  notifications Notification[]
+  blacklists    Blacklist[]
+  pageAlerts    PageAlert[]
+
+  student1Binomes  Binome[] @relation("Student1Binomes")
+  student2Binomes  Binome[] @relation("Student2Binomes")
+  requestedBinomes Binome[] @relation("RequestedBinomes")
+
+  recommendationScores RecommendationScore[]
+  reportsFiled         IncidentReport[]      @relation("SupervisorIncidentReports")
+  reportsReceived      IncidentReport[]      @relation("ReportedIncidentReports")
+
+  academicReport       AcademicReport?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Subject {
+  id             String   @id @default(uuid())
+  title          String
+  description    String
+  technologies   String[]
+  requiredSkills String[] @default([])
+<<<<<<< HEAD
+  languages      String[] @default([])
+=======
+>>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
+  duration       String   @default("N/A")
+  places         Int      @default(1)
+  archived       Boolean  @default(false)
+  department     String?
+  educationField EducationField?
+
+  supervisorId String
+  supervisor   User   @relation(fields: [supervisorId], references: [id], onDelete: Cascade)
+
+  internshipType       String?
+  allowedDegreeLevels  String[] @default([])
+  allowedAcademicYears String[] @default([])
+
+  applications         Application[]
+  recommendationScores RecommendationScore[]
+  documents            SubjectDocument[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model SubjectDocument {
+  id String @id @default(uuid())
+
+  subjectId String
+  subject   Subject @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+
+  uploadedById String?
+
+  originalName String
+  fileName     String
+  filePath     String
+  fileType     String
+  fileSize     Int
+
+  createdAt DateTime @default(now())
+}
+
+model Application {
+  id String @id @default(uuid())
+
+  studentId String?
+  student   User?   @relation("StudentApplications", fields: [studentId], references: [id], onDelete: Cascade)
+
+  binomeId String?
+  binome   Binome? @relation(fields: [binomeId], references: [id], onDelete: Cascade)
+
+  subjectId String
+  subject   Subject @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+
+  status ApplicationStatus @default(PENDING)
+
+  interviewLink String?
+  interviewAt   DateTime?
+  completedAt   DateTime?
+
+  conversation Conversation?
+<<<<<<< HEAD
+=======
+  reports      IncidentReport[]
+>>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
+  academicReport AcademicReport?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([studentId, subjectId])
+  @@index([binomeId, subjectId])
+}
+
+model CV {
+  id              String   @id @default(uuid())
+  userId          String
+  originalName    String
+  fileName        String
+  filePath        String
+  fileType        String
+  fileSize        Int
+  extractedSkills String[]
+  extractedData   Json?
+  rawText         String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  uploadedAt DateTime @default(now())
+}
+
+model AcademicReport {
+  id           String   @id @default(uuid())
+  userId       String   @unique
+  applicationId String? @unique
+  originalName String
+  fileName     String
+  filePath     String
+  fileType     String
+  fileSize     Int
+  status       String   @default("SUBMITTED")
+  submittedAt  DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  application Application? @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+}
+
+model RecommendationScore {
+  id String @id @default(uuid())
+
+  studentId String?
+  student   User?   @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  binomeId String?
+  binome   Binome? @relation(fields: [binomeId], references: [id], onDelete: Cascade)
+
+  subjectId String
+  subject   Subject @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+
+  score                 Int
+  matchedSkills         String[]
+  missingSkills         String[]
+  matchedLanguages      String[] @default([])
+  scoreBreakdown        Json?
+  recommendationReason  String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([studentId, subjectId])
+  @@unique([binomeId, subjectId])
+}
+
+model Conversation {
+  id String @id @default(uuid())
+
+  type ConversationType @default(APPLICATION)
+
+  studentId     String?
+  supervisorId  String?
+  applicationId String? @unique
+  binomeId      String? @unique
+
+  student     User?        @relation("StudentConversation", fields: [studentId], references: [id], onDelete: Cascade)
+  supervisor  User?        @relation("SupervisorConversation", fields: [supervisorId], references: [id], onDelete: Cascade)
+  application Application? @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  binome      Binome?      @relation(fields: [binomeId], references: [id], onDelete: Cascade)
+
+  messages Message[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+}
+
+model Message {
+  id String @id @default(uuid())
+
+  conversationId String
+  senderId       String
+  content        String
+
+  conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  sender       User         @relation(fields: [senderId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+}
+
+model AuditLog {
+  id String @id @default(uuid())
+
+  actorId String?
+  actor   User?   @relation(fields: [actorId], references: [id], onDelete: SetNull)
+
+  action   String
+  entity   String
+  entityId String?
+
+  details String?
+
+  createdAt DateTime @default(now())
+}
+
+model Notification {
+  id String @id @default(uuid())
+
+  recipientId String
+  recipient   User   @relation(fields: [recipientId], references: [id], onDelete: Cascade)
+
+  title   String
+  message String
+  type    String
+
+  isRead Boolean @default(false)
+
+  createdAt DateTime @default(now())
+}
+
+model PageAlert {
+  id String @id @default(uuid())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  pageKey    String
+  refId      String?
+  isResolved Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId, pageKey, isResolved])
+}
+
+model Blacklist {
+  id String @id @default(uuid())
+
+  email  String  @unique
+  reason String?
+
+  bannedById String?
+  bannedBy   User?   @relation(fields: [bannedById], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
+}
+
+model IncidentReport {
+  id String @id @default(uuid())
+
+  supervisorId  String
+  studentId     String
+<<<<<<< HEAD
+
+  supervisor  User         @relation("SupervisorIncidentReports", fields: [supervisorId], references: [id], onDelete: Cascade)
+  student     User         @relation("ReportedIncidentReports", fields: [studentId], references: [id], onDelete: Cascade)
+=======
+  applicationId String?
+
+  supervisor  User         @relation("SupervisorIncidentReports", fields: [supervisorId], references: [id], onDelete: Cascade)
+  student     User         @relation("ReportedIncidentReports", fields: [studentId], references: [id], onDelete: Cascade)
+  application Application? @relation(fields: [applicationId], references: [id], onDelete: SetNull)
+>>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
+
+  reason String
+
+  createdAt DateTime @default(now())
+
+  @@index([supervisorId])
+  @@index([studentId])
+<<<<<<< HEAD
+=======
+  @@index([applicationId])
+>>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
+}
+
+model Binome {
+  id String @id @default(uuid())
+
+  student1Id    String
+  student2Id    String
+  requestedById String
+
+  student1    User @relation("Student1Binomes", fields: [student1Id], references: [id], onDelete: Cascade)
+  student2    User @relation("Student2Binomes", fields: [student2Id], references: [id], onDelete: Cascade)
+  requestedBy User @relation("RequestedBinomes", fields: [requestedById], references: [id], onDelete: Cascade)
+
+  status BinomeStatus @default(PENDING)
+
+  applications         Application[]
+  recommendationScores RecommendationScore[]
+  conversation         Conversation?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([student1Id, student2Id])
+}

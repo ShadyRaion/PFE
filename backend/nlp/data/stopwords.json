@@ -1,0 +1,18 @@
+{
+  "stopwords": [
+    "the", "and", "or", "of", "to", "in", "on", "at", "for", "with", "from", "by",
+    "le", "la", "les", "un", "une", "des", "de", "du", "et", "ou", "avec", "sans", "pour", "par",
+    "team", "project", "projet", "work", "travail", "student", "etudiant", "stagiaire", "intern", "internship", "stage",
+    "experience", "expérience", "skills", "competences", "compétences", "education", "formation",
+    "languages", "langues", "summary", "profile", "profil", "resume", "cv", "curriculum vitae",
+    "company", "societe", "société", "enterprise", "entreprise",
+    "month", "year", "annee", "année", "mois", "day", "jour", "week", "semaine",
+    "linkedin", "github", "gmail", "email", "phone", "tel", "telephone",
+    "junior", "senior", "stagiaire", "developer", "developpeur",
+    "about", "contact", "address", "adresse", "born", "ne le", "née le",
+    "etudiante", "etudiant",
+    "responsibilities", "responsabilites", "responsabilités",
+    "achievements", "realisations", "réalisations",
+    "rest", "back", "front", "end", "side"
+  ]
+}
