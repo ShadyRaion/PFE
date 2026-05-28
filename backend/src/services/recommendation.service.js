@@ -76,6 +76,110 @@ const getLatestCV = async (userId) => {
   });
 };
 
+const getStudentsMissingCV = async (students = []) => {
+  const result = [];
+
+  for (const student of students.filter((item) => item?.id)) {
+    const cv = await getLatestCV(student.id);
+    if (!cv) {
+      result.push({
+        id: student.id,
+        fullName: student.fullName,
+        isCurrentUser: Boolean(student.isCurrentUser),
+      });
+    }
+  }
+
+  return result;
+};
+
+const buildCvRequirementMessage = (missingStudents = []) => {
+  if (missingStudents.length === 0) return "";
+
+  const currentUserMissing = missingStudents.some((student) => student.isCurrentUser);
+  const teammateMissing = missingStudents.find((student) => !student.isCurrentUser);
+
+  if (missingStudents.length > 1) {
+    return "Both team members must upload their CVs before scores appear and applications are unlocked.";
+  }
+
+  if (currentUserMissing) {
+    return "Upload your CV before applying. Scores appear only after the required CV is uploaded.";
+  }
+
+  return `${teammateMissing?.fullName || "Your team member"} has not uploaded their CV yet. Both team members must upload their CVs before scores appear and applications are unlocked.`;
+};
+
+const getApplicationCvRequirement = async (studentId) => {
+  const activeBinome = await getActiveBinome(studentId);
+
+  if (activeBinome) {
+    const binome = await prisma.binome.findUnique({
+      where: {
+        id: activeBinome.id,
+      },
+      include: {
+        student1: {
+          select: {
+            id: true,
+            fullName: true,
+          },
+        },
+        student2: {
+          select: {
+            id: true,
+            fullName: true,
+          },
+        },
+      },
+    });
+
+    const missingStudents = await getStudentsMissingCV([
+      {
+        ...binome?.student1,
+        isCurrentUser: binome?.student1Id === studentId,
+      },
+      {
+        ...binome?.student2,
+        isCurrentUser: binome?.student2Id === studentId,
+      },
+    ]);
+
+    return {
+      ready: missingStudents.length === 0,
+      message: buildCvRequirementMessage(missingStudents),
+      missingStudents,
+      recommendationType: "BINOME",
+      binomeId: activeBinome.id,
+    };
+  }
+
+  const student = await prisma.user.findUnique({
+    where: {
+      id: studentId,
+    },
+    select: {
+      id: true,
+      fullName: true,
+    },
+  });
+
+  const missingStudents = await getStudentsMissingCV([
+    {
+      ...student,
+      isCurrentUser: true,
+    },
+  ]);
+
+  return {
+    ready: missingStudents.length === 0,
+    message: buildCvRequirementMessage(missingStudents),
+    missingStudents,
+    recommendationType: "MONOME",
+    binomeId: null,
+  };
+};
+
 const getCvSkills = async (userId) => {
   const cv = await getLatestCV(userId);
 
@@ -655,6 +759,19 @@ const getSavedScoreForStudentSubject = async ({ studentId, subjectId }) => {
 
   const activeBinome = await getActiveBinome(studentId);
 
+  const cvRequirement = await getApplicationCvRequirement(studentId);
+
+  if (!cvRequirement.ready) {
+    return {
+      score: null,
+      matchedSkills: [],
+      missingSkills: [],
+      recommendationType: cvRequirement.recommendationType,
+      binomeId: cvRequirement.binomeId,
+      cvRequirement,
+    };
+  }
+
   if (activeBinome) {
     const binomeScore = await ensureBinomeScoreFresh({
       binomeId: activeBinome.id,
@@ -668,6 +785,7 @@ const getSavedScoreForStudentSubject = async ({ studentId, subjectId }) => {
       missingSkills: binomeScore?.missingSkills || [],
       recommendationType: "BINOME",
       binomeId: activeBinome.id,
+      cvRequirement,
     };
   }
 
@@ -683,15 +801,33 @@ const getSavedScoreForStudentSubject = async ({ studentId, subjectId }) => {
     missingSkills: studentScore?.missingSkills || [],
     recommendationType: "MONOME",
     binomeId: null,
+    cvRequirement,
   };
 };
 
 const attachSavedScoresToSubjectsForStudent = async ({ studentId, subjects }) => {
   const activeBinome = await getActiveBinome(studentId);
+  const cvRequirement = await getApplicationCvRequirement(studentId);
 
   const result = [];
 
   for (const subject of subjects) {
+    if (!cvRequirement.ready) {
+      result.push({
+        ...subject,
+        score: null,
+        matchedSkills: [],
+        missingSkills: [],
+        matchedLanguages: [],
+        scoreBreakdown: null,
+        recommendationReason: null,
+        recommendationType: cvRequirement.recommendationType,
+        binomeId: cvRequirement.binomeId,
+        cvRequirement,
+      });
+      continue;
+    }
+
     const score = activeBinome
       ? await ensureBinomeScoreFresh({
           binomeId: activeBinome.id,
@@ -712,6 +848,7 @@ const attachSavedScoresToSubjectsForStudent = async ({ studentId, subjects }) =>
       recommendationReason: score?.recommendationReason || null,
       recommendationType: activeBinome ? "BINOME" : "MONOME",
       binomeId: activeBinome?.id || null,
+      cvRequirement,
     });
   }
 
@@ -778,6 +915,7 @@ module.exports = {
   getCvSkills,
   getStudentSkills,
   getActiveBinome,
+  getApplicationCvRequirement,
   getBinomeSkills,
   getBinomeStudentSkills,
   calculateScoreFromSkills,

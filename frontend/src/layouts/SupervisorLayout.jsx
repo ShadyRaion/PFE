@@ -1,4 +1,4 @@
-import {
+﻿import {
   LayoutDashboard,
   Inbox,
   UserCheck,
@@ -8,10 +8,6 @@ import {
   MessageSquare,
   Bell,
   User,
-<<<<<<< HEAD
-=======
-  Settings,
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
 } from "lucide-react";
 import SidebarLayout from "../components/layouts/SidebarLayout";
 
@@ -83,10 +79,6 @@ const sections = [
     label: "Account",
     items: [
       { to: "/encadrant/mon-profile", label: "My profile", icon: User },
-<<<<<<< HEAD
-=======
-      { to: "/encadrant/settings", label: "Settings", icon: Settings },
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
     ],
   },
 ];

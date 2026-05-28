@@ -4,10 +4,6 @@ import {
   AlertTriangle,
   Search,
   AlertCircle,
-<<<<<<< HEAD
-=======
-  User,
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
   Mail,
   Calendar,
   UserCog,
@@ -20,27 +16,16 @@ import {
   CardBody,
   Field,
   Input,
-<<<<<<< HEAD
   Badge,
   EmptyState,
 } from "../../components/ui";
 import DateRangeFilter from "../../components/filters/DateRangeFilter";
 import { createDateRange, matchesDateRange } from "../../utils/filters";
-=======
-  Select,
-  Badge,
-  EmptyState,
-} from "../../components/ui";
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
 
 function AdminReports() {
   const [reports, setReports] = useState([]);
   const [search, setSearch] = useState("");
-<<<<<<< HEAD
   const [dateFilter, setDateFilter] = useState(createDateRange("ALL"));
-=======
-  const [dateFilter, setDateFilter] = useState("ALL");
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
   const [message, setMessage] = useState("");
 
   const fetchReports = useCallback(async () => {
@@ -57,33 +42,6 @@ function AdminReports() {
     queueMicrotask(fetchReports);
   }, [fetchReports]);
 
-<<<<<<< HEAD
-=======
-  const isInDateFilter = useCallback(
-    (date) => {
-      if (!date || dateFilter === "ALL") return true;
-
-      const createdAt = new Date(date);
-      const now = new Date();
-
-      if (dateFilter === "TODAY") {
-        return createdAt.toDateString() === now.toDateString();
-      }
-
-      if (dateFilter === "7_DAYS") {
-        return now - createdAt <= 7 * 24 * 60 * 60 * 1000;
-      }
-
-      if (dateFilter === "30_DAYS") {
-        return now - createdAt <= 30 * 24 * 60 * 60 * 1000;
-      }
-
-      return true;
-    },
-    [dateFilter]
-  );
-
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
   const filteredReports = useMemo(() => {
     return reports.filter((report) => {
       const haystack = [
@@ -103,17 +61,10 @@ function AdminReports() {
 
       return (
         haystack.includes(search.toLowerCase()) &&
-<<<<<<< HEAD
         matchesDateRange(report.createdAt, dateFilter)
       );
     });
   }, [reports, search, dateFilter]);
-=======
-        isInDateFilter(report.createdAt)
-      );
-    });
-  }, [reports, search, isInDateFilter]);
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
 
   return (
     <div className="space-y-6">
@@ -149,22 +100,7 @@ function AdminReports() {
               </div>
             </Field>
 
-<<<<<<< HEAD
             <DateRangeFilter value={dateFilter} onChange={setDateFilter} />
-=======
-            <Field label="Date" htmlFor="dateFilter">
-              <Select
-                id="dateFilter"
-                value={dateFilter}
-                onChange={(e) => setDateFilter(e.target.value)}
-              >
-                <option value="ALL">All dates</option>
-                <option value="TODAY">Today</option>
-                <option value="7_DAYS">Last 7 days</option>
-                <option value="30_DAYS">Last 30 days</option>
-              </Select>
-            </Field>
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
           </div>
         </CardBody>
       </Card>
@@ -225,11 +161,7 @@ function AdminReports() {
                     </div>
                   </div>
 
-<<<<<<< HEAD
                   <div className="report-reason-text mt-5 rounded-xl border border-rose-200 bg-rose-50 p-4">
-=======
-                  <div className="mt-5 rounded-xl border border-rose-200 bg-rose-50 p-4">
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
                     <p className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-rose-700">
                       <AlertTriangle className="h-3.5 w-3.5" strokeWidth={2.5} />
                       Report reason

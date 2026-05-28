@@ -15,29 +15,17 @@ import {
   CardBody,
   Field,
   Input,
-<<<<<<< HEAD
-=======
-  Select,
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
   Badge,
   EmptyState,
   LoadingState,
 } from "../../components/ui";
-<<<<<<< HEAD
 import DateRangeFilter from "../../components/filters/DateRangeFilter";
 import { createDateRange, matchesDateRange } from "../../utils/filters";
-=======
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
 
 function AuditLogs() {
   const [logs, setLogs] = useState([]);
   const [search, setSearch] = useState("");
-<<<<<<< HEAD
   const [dateFilter, setDateFilter] = useState(createDateRange("ALL"));
-=======
-  const [actionFilter, setActionFilter] = useState("ALL");
-  const [dateFilter, setDateFilter] = useState("ALL");
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(true);
 
@@ -68,39 +56,6 @@ function AuditLogs() {
     queueMicrotask(fetchLogs);
   }, [fetchLogs]);
 
-<<<<<<< HEAD
-=======
-  const isInDateFilter = useCallback(
-    (date) => {
-      if (!date) return true;
-      if (dateFilter === "ALL") return true;
-
-      const createdAt = new Date(date);
-      const now = new Date();
-
-      if (dateFilter === "TODAY") {
-        return createdAt.toDateString() === now.toDateString();
-      }
-
-      if (dateFilter === "7_DAYS") {
-        return now - createdAt <= 7 * 24 * 60 * 60 * 1000;
-      }
-
-      if (dateFilter === "30_DAYS") {
-        return now - createdAt <= 30 * 24 * 60 * 60 * 1000;
-      }
-
-      return true;
-    },
-    [dateFilter]
-  );
-
-  const actions = useMemo(() => {
-    const values = logs.map((log) => log.action).filter(Boolean);
-    return ["ALL", ...Array.from(new Set(values))];
-  }, [logs]);
-
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
   const filteredLogs = useMemo(() => {
     return logs.filter((log) => {
       const actor = log.actor || {};
@@ -121,22 +76,11 @@ function AuditLogs() {
 
       const matchesSearch = text.includes(search.toLowerCase());
 
-<<<<<<< HEAD
       const matchesDate = matchesDateRange(log.createdAt, dateFilter);
 
       return matchesSearch && matchesDate;
     });
   }, [logs, search, dateFilter]);
-=======
-      const matchesAction =
-        actionFilter === "ALL" || log.action === actionFilter;
-
-      const matchesDate = isInDateFilter(log.createdAt);
-
-      return matchesSearch && matchesAction && matchesDate;
-    });
-  }, [logs, search, actionFilter, isInDateFilter]);
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
 
   if (loading) {
     return (
@@ -174,11 +118,7 @@ function AuditLogs() {
 
       <Card>
         <CardBody>
-<<<<<<< HEAD
           <div className="grid gap-4 lg:grid-cols-3">
-=======
-          <div className="grid gap-4 lg:grid-cols-4">
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
             <Field label="Search" htmlFor="search" className="lg:col-span-2">
               <div className="relative">
                 <Search
@@ -195,36 +135,7 @@ function AuditLogs() {
               </div>
             </Field>
 
-<<<<<<< HEAD
             <DateRangeFilter value={dateFilter} onChange={setDateFilter} />
-=======
-            <Field label="Action" htmlFor="actionFilter">
-              <Select
-                id="actionFilter"
-                value={actionFilter}
-                onChange={(e) => setActionFilter(e.target.value)}
-              >
-                {actions.map((action) => (
-                  <option key={action} value={action}>
-                    {action === "ALL" ? "All actions" : action}
-                  </option>
-                ))}
-              </Select>
-            </Field>
-
-            <Field label="Date" htmlFor="dateFilter">
-              <Select
-                id="dateFilter"
-                value={dateFilter}
-                onChange={(e) => setDateFilter(e.target.value)}
-              >
-                <option value="ALL">All dates</option>
-                <option value="TODAY">Today</option>
-                <option value="7_DAYS">Last 7 days</option>
-                <option value="30_DAYS">Last 30 days</option>
-              </Select>
-            </Field>
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
           </div>
         </CardBody>
       </Card>
@@ -244,11 +155,7 @@ function AuditLogs() {
 
             <tbody className="divide-y divide-[#e2edf2]">
               {filteredLogs.map((log) => (
-<<<<<<< HEAD
                 <tr key={log.id} className="admin-hover-row transition hover:bg-cyan-50/50">
-=======
-                <tr key={log.id} className="transition hover:bg-cyan-50/50">
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
                   <td className="px-5 py-3.5">
                     <span className="inline-flex items-center gap-1.5 text-sm text-slate-600">
                       <Calendar className="h-3.5 w-3.5 text-slate-400" strokeWidth={2.5} />
@@ -259,11 +166,7 @@ function AuditLogs() {
                   </td>
 
                   <td className="px-5 py-3.5">
-<<<<<<< HEAD
                     <Badge variant="info" size="sm" className="audit-action-badge">
-=======
-                    <Badge variant="info" size="sm">
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
                       {log.action || "-"}
                     </Badge>
                   </td>

@@ -11,10 +11,6 @@ import {
   SUPERVISOR_DEPARTMENTS,
   SUPERVISOR_RANKS,
   SUPERVISOR_DIVISIONS,
-<<<<<<< HEAD
-=======
-  SUPERVISOR_DIVISIONS_BY_DEPARTMENT,
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
   getAcademicYearOptions,
   ACADEMIC_YEARS_BY_DEGREE,
 } from "../../constants/profileFields";
@@ -507,11 +503,7 @@ function MonProfile() {
         </CardBody>
       </Card>
 
-<<<<<<< HEAD
       {(isStudent || isSupervisor) && (
-=======
-      {isStudent && (
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
         <>
         <Card>
         <CardBody>

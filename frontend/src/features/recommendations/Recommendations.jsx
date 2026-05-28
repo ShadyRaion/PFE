@@ -3,18 +3,11 @@ import { useNavigate } from "react-router-dom";
 import {
   Sparkles,
   Search,
-<<<<<<< HEAD
-=======
-  AlertCircle,
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
   CheckCircle2,
   User,
   Languages,
   Info,
-<<<<<<< HEAD
   Clock,
-=======
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
 } from "lucide-react";
 import api from "../../api/axios";
 import {
@@ -27,25 +20,18 @@ import {
   LoadingState,
   Field,
   Input,
-<<<<<<< HEAD
   Select,
 } from "../../components/ui";
 import {
   DURATION_FILTERS,
   matchesDurationFilter,
 } from "../../utils/filters";
-=======
-} from "../../components/ui";
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
 
 function Recommendations() {
   const navigate = useNavigate();
   const [recommendations, setRecommendations] = useState([]);
   const [search, setSearch] = useState("");
-<<<<<<< HEAD
   const [durationFilter, setDurationFilter] = useState("ALL");
-=======
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(true);
 
@@ -111,18 +97,12 @@ function Recommendations() {
         .join(" ")
         .toLowerCase();
 
-<<<<<<< HEAD
       return (
         text.includes(search.toLowerCase()) &&
         matchesDurationFilter(subject.duration, durationFilter)
       );
     });
   }, [recommendations, search, durationFilter]);
-=======
-      return text.includes(search.toLowerCase());
-    });
-  }, [recommendations, search]);
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
 
   return (
     <div className="space-y-6">
@@ -141,7 +121,6 @@ function Recommendations() {
 
       <Card>
         <CardBody>
-<<<<<<< HEAD
           <div className="grid gap-4 lg:grid-cols-3">
             <Field label="Search" htmlFor="search" className="lg:col-span-2">
               <div className="relative">
@@ -172,23 +151,6 @@ function Recommendations() {
               </Select>
             </Field>
           </div>
-=======
-          <Field label="Search" htmlFor="search">
-            <div className="relative">
-              <Search
-                className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"
-                strokeWidth={2.5}
-              />
-              <Input
-                id="search"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder="Subject, technology, skill..."
-                className="pl-9"
-              />
-            </div>
-          </Field>
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
         </CardBody>
       </Card>
 
@@ -229,7 +191,6 @@ function Recommendations() {
                           {subject.supervisor?.fullName || "-"}
                         </span>
                       </p>
-<<<<<<< HEAD
                       <p className="mt-1 flex items-center gap-1.5 text-sm text-slate-500">
                         <Clock className="h-3.5 w-3.5" strokeWidth={2.5} />
                         Duration:{" "}
@@ -237,8 +198,6 @@ function Recommendations() {
                           {subject.duration || "N/A"}
                         </span>
                       </p>
-=======
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
                     </div>
 
                     <ScoreBadge score={score} size="lg" />

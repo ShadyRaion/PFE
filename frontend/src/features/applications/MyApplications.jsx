@@ -26,21 +26,14 @@ import {
   Input,
   Select,
 } from "../../components/ui";
-<<<<<<< HEAD
 import DateRangeFilter from "../../components/filters/DateRangeFilter";
 import { createDateRange, matchesDateRange } from "../../utils/filters";
-=======
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
 
 function MyApplications() {
   const [applications, setApplications] = useState([]);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("ALL");
-<<<<<<< HEAD
   const [dateFilter, setDateFilter] = useState(createDateRange("ALL"));
-=======
-  const [dateFilter, setDateFilter] = useState("ALL");
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
   const [message, setMessage] = useState("");
   const [confirmingCancelId, setConfirmingCancelId] = useState(null);
   const [confirmingCompleteId, setConfirmingCompleteId] = useState(null);
@@ -100,29 +93,6 @@ function MyApplications() {
     return matchedSkills.includes(String(skill).toLowerCase());
   };
 
-<<<<<<< HEAD
-=======
-  const isInDateFilter = useCallback(
-    (date) => {
-      if (!date) return true;
-      if (dateFilter === "ALL") return true;
-      const createdAt = new Date(date);
-      const now = new Date();
-      if (dateFilter === "TODAY") {
-        return createdAt.toDateString() === now.toDateString();
-      }
-      if (dateFilter === "7_DAYS") {
-        return now - createdAt <= 7 * 24 * 60 * 60 * 1000;
-      }
-      if (dateFilter === "30_DAYS") {
-        return now - createdAt <= 30 * 24 * 60 * 60 * 1000;
-      }
-      return true;
-    },
-    [dateFilter]
-  );
-
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
   const filteredApplications = useMemo(() => {
     return applications.filter((application) => {
       const text = [
@@ -140,17 +110,10 @@ function MyApplications() {
       const matchesSearch = text.includes(search.toLowerCase());
       const matchesStatus =
         statusFilter === "ALL" || application.status === statusFilter;
-<<<<<<< HEAD
       const matchesDate = matchesDateRange(application.createdAt, dateFilter);
       return matchesSearch && matchesStatus && matchesDate;
     });
   }, [applications, search, statusFilter, dateFilter]);
-=======
-      const matchesDate = isInDateFilter(application.createdAt);
-      return matchesSearch && matchesStatus && matchesDate;
-    });
-  }, [applications, search, statusFilter, isInDateFilter]);
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
 
   const statusConfig = (status) => {
     if (status === "AFFECTED")
@@ -221,22 +184,7 @@ function MyApplications() {
               </Select>
             </Field>
 
-<<<<<<< HEAD
             <DateRangeFilter value={dateFilter} onChange={setDateFilter} />
-=======
-            <Field label="Date" htmlFor="date">
-              <Select
-                id="date"
-                value={dateFilter}
-                onChange={(e) => setDateFilter(e.target.value)}
-              >
-                <option value="ALL">All dates</option>
-                <option value="TODAY">Today</option>
-                <option value="7_DAYS">Last 7 days</option>
-                <option value="30_DAYS">Last 30 days</option>
-              </Select>
-            </Field>
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
           </div>
         </CardBody>
       </Card>

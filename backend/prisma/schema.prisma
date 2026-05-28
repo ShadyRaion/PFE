@@ -95,7 +95,6 @@ model User {
   reportsFiled         IncidentReport[]      @relation("SupervisorIncidentReports")
   reportsReceived      IncidentReport[]      @relation("ReportedIncidentReports")
 
-  academicReport       AcademicReport?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -107,10 +106,7 @@ model Subject {
   description    String
   technologies   String[]
   requiredSkills String[] @default([])
-<<<<<<< HEAD
   languages      String[] @default([])
-=======
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
   duration       String   @default("N/A")
   places         Int      @default(1)
   archived       Boolean  @default(false)
@@ -168,10 +164,6 @@ model Application {
   completedAt   DateTime?
 
   conversation Conversation?
-<<<<<<< HEAD
-=======
-  reports      IncidentReport[]
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
   academicReport AcademicReport?
 
   createdAt DateTime @default(now())
@@ -200,7 +192,6 @@ model CV {
 
 model AcademicReport {
   id           String   @id @default(uuid())
-  userId       String   @unique
   applicationId String? @unique
   originalName String
   fileName     String
@@ -211,7 +202,6 @@ model AcademicReport {
   submittedAt  DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   application Application? @relation(fields: [applicationId], references: [id], onDelete: Cascade)
 }
 
@@ -338,17 +328,9 @@ model IncidentReport {
 
   supervisorId  String
   studentId     String
-<<<<<<< HEAD
 
   supervisor  User         @relation("SupervisorIncidentReports", fields: [supervisorId], references: [id], onDelete: Cascade)
   student     User         @relation("ReportedIncidentReports", fields: [studentId], references: [id], onDelete: Cascade)
-=======
-  applicationId String?
-
-  supervisor  User         @relation("SupervisorIncidentReports", fields: [supervisorId], references: [id], onDelete: Cascade)
-  student     User         @relation("ReportedIncidentReports", fields: [studentId], references: [id], onDelete: Cascade)
-  application Application? @relation(fields: [applicationId], references: [id], onDelete: SetNull)
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
 
   reason String
 
@@ -356,10 +338,6 @@ model IncidentReport {
 
   @@index([supervisorId])
   @@index([studentId])
-<<<<<<< HEAD
-=======
-  @@index([applicationId])
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
 }
 
 model Binome {

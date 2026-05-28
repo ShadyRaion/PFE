@@ -32,7 +32,6 @@ export const translations = {
   "2 months": "2 mois",
   "3 months": "3 mois",
   "4 months": "4 mois",
-<<<<<<< HEAD
   "5 months": "5 mois",
   "6 months": "6 mois",
   "6+ months": "6+ mois",
@@ -40,9 +39,6 @@ export const translations = {
   "Custom period": "Période personnalisée",
   "From date": "Date de début",
   "To date": "Date de fin",
-=======
-  "6 months": "6 mois",
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
   "Information Systems": "Systèmes d'information",
   "Digital Banking": "Banque digitale",
   "Finance and Risk Management": "Finance et gestion des risques",
@@ -154,7 +150,6 @@ export const translations = {
   "All profiles": "Tous les profils",
   "All scores": "Tous les scores",
   "All types": "Tous les types",
-<<<<<<< HEAD
   "All degrees": "Tous les diplômes",
   "All fields": "Tous les domaines",
   "All academic years": "Toutes les années académiques",
@@ -169,8 +164,6 @@ export const translations = {
   "No assigned students": "Sans étudiant affecté",
   "Solo and team": "Solo et binôme",
   "Solo student": "Stagiaire solo",
-=======
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
   Today: "Aujourd'hui",
   "Last 7 days": "7 derniers jours",
   "Last 30 days": "30 derniers jours",
@@ -188,7 +181,6 @@ export const translations = {
   Technologies: "Technologies",
   Skills: "Comp\u00e9tences",
   "Required skills": "Comp\u00e9tences requises",
-<<<<<<< HEAD
   Languages: "Langues",
   "No language.": "Aucune langue.",
   Eligibility: "\u00c9ligibilit\u00e9",
@@ -200,8 +192,6 @@ export const translations = {
   "Only students in this field will see and be able to apply.": "Seuls les \u00e9tudiants de ce domaine verront le sujet et pourront postuler.",
   "Only students whose internship matches this type can apply.": "Seuls les \u00e9tudiants dont le stage correspond \u00e0 ce type peuvent postuler.",
   "Select an education field": "S\u00e9lectionnez un domaine d'\u00e9tudes",
-=======
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
   Documents: "Documents",
   "Existing documents": "Documents existants",
   "Add documents": "Ajouter des documents",
@@ -445,10 +435,7 @@ export const translations = {
   "With documents": "Avec documents",
   "Without documents": "Sans documents",
   "Untitled subject": "Sujet sans titre",
-<<<<<<< HEAD
   "No required skills": "Aucune comp\u00e9tence requise",
-=======
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
   "No required skills.": "Aucune comp\u00e9tence requise.",
   "No conversation.": "Aucune conversation.",
   "Team -": "Bin\u00f4me -",
@@ -505,11 +492,8 @@ export const translations = {
   "Resume not available.": "CV non disponible.",
   "Loading Resume...": "Chargement du CV...",
   "Resume preview": "Aperçu du CV",
-<<<<<<< HEAD
   "Extracted Resume data": "Données extraites du CV",
   "Extracted skills": "Compétences extraites",
-=======
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
   "No Resume available.": "Aucun CV disponible.",
   "Resume strength": "Force du CV",
   "Resume language detected:": "Langue du CV détectée :",
@@ -517,7 +501,6 @@ export const translations = {
   "Error while saving the Resume.": "Erreur lors de l'enregistrement du CV.",
   "Cancel this assignment?": "Annuler cette affectation ?",
   "Review reports submitted by supervisors.": "Examinez les signalements envoy\u00e9s par les encadrants.",
-<<<<<<< HEAD
   Mode: "Mode",
   "Partner:": "Binôme :",
   "Assigned subject": "Sujet affecté",
@@ -528,8 +511,6 @@ export const translations = {
   "Open report": "Ouvrir le rapport",
   "Unable to load completed assignments.": "Impossible de charger les affectations terminées.",
   "Unable to open the final report.": "Impossible d'ouvrir le rapport final.",
-=======
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
   "Search student, supervisor, subject, reason...": "Rechercher \u00e9tudiant, encadrant, sujet, motif...",
   Reported: "Signal\u00e9",
   "No report.": "Aucun signalement.",
@@ -576,4 +557,5 @@ export const translations = {
   "Account reactivated": "Compte r\u00e9activ\u00e9",
   "Assignment removed": "Affectation retir\u00e9e",
   Error: "Erreur",
+
 };

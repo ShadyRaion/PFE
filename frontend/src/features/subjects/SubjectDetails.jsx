@@ -10,10 +10,7 @@ import {
   Mail,
   Send,
   Info,
-<<<<<<< HEAD
   Clock,
-=======
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
 } from "lucide-react";
 import api from "../../api/axios";
 import useSessionUser from "../../hooks/useSessionUser";
@@ -250,7 +247,6 @@ function SubjectDetails() {
                   <Calendar className="h-4 w-4" strokeWidth={2.5} />
                   {new Date(subject.createdAt).toLocaleDateString()}
                 </span>
-<<<<<<< HEAD
                 <span className="inline-flex items-center gap-1.5">
                   <Clock className="h-4 w-4" strokeWidth={2.5} />
                   Duration{" "}
@@ -258,8 +254,6 @@ function SubjectDetails() {
                     {subject.duration || "N/A"}
                   </span>
                 </span>
-=======
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
               </div>
             </CardBody>
           </Card>

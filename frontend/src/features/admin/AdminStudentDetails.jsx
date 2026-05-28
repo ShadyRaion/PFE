@@ -214,7 +214,6 @@ function AdminStudentDetails({ user, onClose, mode = "modal" }) {
           )}
         </div>
 
-<<<<<<< HEAD
         {user.role === "STUDENT" && (
           <div className="student-mode-card mt-6 rounded-2xl border border-[#e2edf2] bg-slate-50 p-5">
             <p className="detail-card-label inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider">
@@ -242,30 +241,11 @@ function AdminStudentDetails({ user, onClose, mode = "modal" }) {
                 Partner: {user.partner.fullName} ({user.partner.email})
               </button>
             )}
-=======
-        {user.binome && (
-          <div className="mt-6 rounded-2xl border border-cyan-200 bg-cyan-50 p-5">
-            <p className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-cyan-700">
-              <UsersIcon className="h-3.5 w-3.5" strokeWidth={2.5} />
-              Team
-            </p>
-            <h3 className="mt-2 text-xl font-black text-slate-950">
-              {user.binome.fullName}
-            </h3>
-            <p className="mt-1 inline-flex items-center gap-1.5 text-sm text-slate-600">
-              <Mail className="h-3.5 w-3.5 text-slate-400" strokeWidth={2.5} />
-              {user.binome.email}
-            </p>
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
           </div>
         )}
 
         {user.affectedApplication && (
-<<<<<<< HEAD
           <div className="assignment-detail-card mt-6 rounded-2xl border border-emerald-200 bg-emerald-50 p-5">
-=======
-          <div className="mt-6 rounded-2xl border border-emerald-200 bg-emerald-50 p-5">
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
             <p className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-emerald-700">
               <CheckCircle2 className="h-3.5 w-3.5" strokeWidth={2.5} />
               Assigned subject
@@ -273,11 +253,7 @@ function AdminStudentDetails({ user, onClose, mode = "modal" }) {
             <button
               type="button"
               onClick={() => openSubject(user.affectedApplication.subject?.id)}
-<<<<<<< HEAD
               className="assignment-subject-title mt-2 block text-left text-2xl font-black text-cyan-700 hover:underline"
-=======
-              className="mt-2 text-left text-2xl font-black text-cyan-700 hover:underline"
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
             >
               {user.affectedApplication.subject?.title}
             </button>

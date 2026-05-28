@@ -255,7 +255,6 @@ const getUserDetails = async (req, res) => {
       });
     }
 
-<<<<<<< HEAD
     if (user.role === "STUDENT") {
       const applications = await prisma.application.findMany({
         where: {
@@ -311,8 +310,6 @@ const getUserDetails = async (req, res) => {
       });
     }
 
-=======
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
     return res.status(200).json(user);
   } catch (error) {
     console.error("GET /admin/users/:id error:", error);
@@ -514,10 +511,6 @@ const getStudentReports = async (req, res) => {
         r."id",
         r."supervisorId",
         r."studentId",
-<<<<<<< HEAD
-=======
-        r."applicationId",
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
         r."reason",
         r."createdAt",
         supervisor."fullName" AS "supervisorFullName",
@@ -527,29 +520,10 @@ const getStudentReports = async (req, res) => {
         student."email" AS "studentEmail",
         student."university" AS "studentUniversity",
         student."specialty" AS "studentSpecialty",
-<<<<<<< HEAD
         student."phone" AS "studentPhone"
       FROM "IncidentReport" r
       JOIN "User" supervisor ON supervisor."id" = r."supervisorId"
       JOIN "User" student ON student."id" = r."studentId"
-=======
-        student."phone" AS "studentPhone",
-        application."subjectId" AS "subjectId",
-        application."status" AS "applicationStatus",
-        application."createdAt" AS "applicationCreatedAt",
-        application."updatedAt" AS "applicationUpdatedAt",
-        subject."title" AS "subjectTitle",
-        subject."description" AS "subjectDescription",
-        subject."supervisorId" AS "subjectSupervisorId",
-        subjectSupervisor."fullName" AS "subjectSupervisorFullName",
-        subjectSupervisor."email" AS "subjectSupervisorEmail"
-      FROM "IncidentReport" r
-      JOIN "User" supervisor ON supervisor."id" = r."supervisorId"
-      JOIN "User" student ON student."id" = r."studentId"
-      LEFT JOIN "Application" application ON application."id" = r."applicationId"
-      LEFT JOIN "Subject" subject ON subject."id" = application."subjectId"
-      LEFT JOIN "User" subjectSupervisor ON subjectSupervisor."id" = subject."supervisorId"
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
       ORDER BY r."createdAt" DESC
     `;
 
@@ -557,10 +531,6 @@ const getStudentReports = async (req, res) => {
       id: row.id,
       supervisorId: row.supervisorId,
       studentId: row.studentId,
-<<<<<<< HEAD
-=======
-      applicationId: row.applicationId,
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
       reason: row.reason,
       createdAt: row.createdAt,
       supervisor: {
@@ -577,33 +547,6 @@ const getStudentReports = async (req, res) => {
         specialty: row.studentSpecialty,
         phone: row.studentPhone,
       },
-<<<<<<< HEAD
-=======
-      application: row.applicationId
-        ? {
-            id: row.applicationId,
-            subjectId: row.subjectId,
-            status: row.applicationStatus,
-            createdAt: row.applicationCreatedAt,
-            updatedAt: row.applicationUpdatedAt,
-            subject: row.subjectId
-              ? {
-                  id: row.subjectId,
-                  title: row.subjectTitle,
-                  description: row.subjectDescription,
-                  supervisorId: row.subjectSupervisorId,
-                  supervisor: row.subjectSupervisorId
-                    ? {
-                        id: row.subjectSupervisorId,
-                        fullName: row.subjectSupervisorFullName,
-                        email: row.subjectSupervisorEmail,
-                      }
-                    : null,
-                }
-              : null,
-          }
-        : null,
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
     }));
 
     await resolveInfoAlerts({
@@ -626,13 +569,9 @@ const getPendingSupervisors = async (req, res) => {
     const supervisors = await prisma.user.findMany({
       where: {
         role: "COMPANY_SUPERVISOR",
-<<<<<<< HEAD
         supervisorStatus: {
           in: ["PENDING", "REJECTED"],
         },
-=======
-        supervisorStatus: "PENDING",
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
       },
       orderBy: {
         createdAt: "desc",

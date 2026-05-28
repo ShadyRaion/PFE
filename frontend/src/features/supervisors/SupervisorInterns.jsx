@@ -19,7 +19,6 @@ import {
   Send,
   Paperclip,
   Info,
-<<<<<<< HEAD
   Languages,
   Clock,
 } from "lucide-react";
@@ -36,10 +35,6 @@ import {
   DURATION_FILTERS,
   matchesDurationFilter,
 } from "../../utils/filters";
-=======
-} from "lucide-react";
-import api from "../../api/axios";
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
 import {
   PageHeader,
   Card,
@@ -55,7 +50,6 @@ import {
   LoadingState,
 } from "../../components/ui";
 
-<<<<<<< HEAD
 const formatExtractedLabel = (value) =>
   String(value || "")
     .replace(/([A-Z])/g, " $1")
@@ -101,8 +95,6 @@ function DetailCard({ icon: Icon, label, children }) {
   );
 }
 
-=======
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
 function SubjectDetailsModal({ subject, onClose, onOpenDocument }) {
   if (!subject) return null;
 
@@ -131,7 +123,6 @@ function SubjectDetailsModal({ subject, onClose, onOpenDocument }) {
           <div className="mt-6 space-y-5">
             <div>
               <p className="text-xs font-black uppercase tracking-widest text-slate-500">
-<<<<<<< HEAD
                 Information
               </p>
               <div className="mt-2 grid gap-2 md:grid-cols-2">
@@ -173,8 +164,6 @@ function SubjectDetailsModal({ subject, onClose, onOpenDocument }) {
 
             <div>
               <p className="text-xs font-black uppercase tracking-widest text-slate-500">
-=======
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
                 Description
               </p>
               <p className="mt-2 leading-7 text-slate-700">
@@ -216,7 +205,6 @@ function SubjectDetailsModal({ subject, onClose, onOpenDocument }) {
 
             <div>
               <p className="inline-flex items-center gap-1.5 text-xs font-black uppercase tracking-widest text-slate-500">
-<<<<<<< HEAD
                 <Languages className="h-3.5 w-3.5" strokeWidth={2.5} />
                 Languages
               </p>
@@ -234,8 +222,6 @@ function SubjectDetailsModal({ subject, onClose, onOpenDocument }) {
 
             <div>
               <p className="inline-flex items-center gap-1.5 text-xs font-black uppercase tracking-widest text-slate-500">
-=======
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
                 <Paperclip className="h-3.5 w-3.5" strokeWidth={2.5} />
                 Documents
               </p>
@@ -264,7 +250,6 @@ function SubjectDetailsModal({ subject, onClose, onOpenDocument }) {
   );
 }
 
-<<<<<<< HEAD
 function StudentDetailsModal({ student, application, onClose, onOpenCV, onReport }) {
   if (!student) return null;
 
@@ -312,12 +297,6 @@ function StudentDetailsModal({ student, application, onClose, onOpenCV, onReport
     ...(resumeLanguages.length > 0 ? [["languages", resumeLanguages]] : []),
     ...extractedEntries,
   ];
-=======
-function StudentDetailsModal({ student, application, onClose, onOpenCV }) {
-  if (!student) return null;
-
-  const cv = student.cvs?.[0];
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-6">
@@ -340,7 +319,6 @@ function StudentDetailsModal({ student, application, onClose, onOpenCV }) {
           </div>
 
           <div className="mt-6 grid gap-3 md:grid-cols-2">
-<<<<<<< HEAD
             {infoCards
               .filter(([label]) => ["University", "Specialty", "Phone"].includes(label))
               .map(([label, value, Icon]) => (
@@ -350,42 +328,6 @@ function StudentDetailsModal({ student, application, onClose, onOpenCV }) {
               ))}
 
             <DetailCard label="Score" icon={CheckCircle2}>
-=======
-            <div className="rounded-xl border border-[#cfe1e8] bg-slate-50 p-4">
-              <p className="inline-flex items-center gap-1.5 text-xs font-black uppercase tracking-widest text-slate-500">
-                <GraduationCap className="h-3.5 w-3.5" strokeWidth={2.5} />
-                University
-              </p>
-              <p className="mt-1.5 font-bold text-slate-950">
-                {student.university || "-"}
-              </p>
-            </div>
-
-            <div className="rounded-xl border border-[#cfe1e8] bg-slate-50 p-4">
-              <p className="inline-flex items-center gap-1.5 text-xs font-black uppercase tracking-widest text-slate-500">
-                <Briefcase className="h-3.5 w-3.5" strokeWidth={2.5} />
-                Specialty
-              </p>
-              <p className="mt-1.5 font-bold text-slate-950">
-                {student.specialty || "-"}
-              </p>
-            </div>
-
-            <div className="rounded-xl border border-[#cfe1e8] bg-slate-50 p-4">
-              <p className="inline-flex items-center gap-1.5 text-xs font-black uppercase tracking-widest text-slate-500">
-                <Phone className="h-3.5 w-3.5" strokeWidth={2.5} />
-                Phone
-              </p>
-              <p className="mt-1.5 font-bold text-slate-950">
-                {student.phone || "-"}
-              </p>
-            </div>
-
-            <div className="rounded-xl border border-[#cfe1e8] bg-slate-50 p-4">
-              <p className="text-xs font-black uppercase tracking-widest text-slate-500">
-                Score
-              </p>
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
               <div className="mt-1.5">
                 {application?.score !== null && application?.score !== undefined ? (
                   <ScoreBadge score={application.score} size="lg" />
@@ -393,7 +335,6 @@ function StudentDetailsModal({ student, application, onClose, onOpenCV }) {
                   <p className="font-bold text-slate-500">-</p>
                 )}
               </div>
-<<<<<<< HEAD
             </DetailCard>
           </div>
 
@@ -482,23 +423,6 @@ function StudentDetailsModal({ student, application, onClose, onOpenCV }) {
                 Report
               </Button>
             </div>
-=======
-            </div>
-          </div>
-
-          {cv ? (
-            <Button
-              className="mt-6"
-              iconLeft={FileText}
-              onClick={() => onOpenCV(cv.id, cv.originalName || cv.fileName)}
-            >
-              Open Resume
-            </Button>
-          ) : (
-            <p className="mt-6 rounded-xl border border-[#cfe1e8] bg-slate-50 p-4 text-sm text-slate-600">
-              Resume unavailable.
-            </p>
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
           )}
         </CardBody>
       </Card>
@@ -511,16 +435,12 @@ function SupervisorInterns() {
 
   const [interns, setInterns] = useState([]);
   const [search, setSearch] = useState("");
-<<<<<<< HEAD
   const [teamFilter, setTeamFilter] = useState("ALL");
   const [educationFieldFilter, setEducationFieldFilter] = useState("ALL");
   const [internshipTypeFilter, setInternshipTypeFilter] = useState("ALL");
   const [durationFilter, setDurationFilter] = useState("ALL");
   const [degreeFilter, setDegreeFilter] = useState("ALL");
   const [academicYearFilter, setAcademicYearFilter] = useState("ALL");
-=======
-  const [dateFilter, setDateFilter] = useState("ALL");
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [selectedApplication, setSelectedApplication] = useState(null);
   const [selectedSubject, setSelectedSubject] = useState(null);
@@ -577,35 +497,8 @@ function SupervisorInterns() {
     return candidates.map((candidate) => candidate.fullName).join(" & ");
   };
 
-<<<<<<< HEAD
   const isBinome = (application) => Boolean(application.binome);
 
-=======
-  const getCandidateEmails = (application) => {
-    const candidates = getCandidates(application);
-    return candidates.map((candidate) => candidate.email).join(" / ");
-  };
-
-  const isBinome = (application) => Boolean(application.binome);
-
-  const isInDateFilter = useCallback((date) => {
-    if (!date) return true;
-    if (dateFilter === "ALL") return true;
-    const createdAt = new Date(date);
-    const now = new Date();
-    if (dateFilter === "TODAY") {
-      return createdAt.toDateString() === now.toDateString();
-    }
-    if (dateFilter === "7_DAYS") {
-      return now - createdAt <= 7 * 24 * 60 * 60 * 1000;
-    }
-    if (dateFilter === "30_DAYS") {
-      return now - createdAt <= 30 * 24 * 60 * 60 * 1000;
-    }
-    return true;
-  }, [dateFilter]);
-
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
   const filteredInterns = useMemo(() => {
     return interns.filter((application) => {
       const candidates = getCandidates(application);
@@ -627,7 +520,6 @@ function SupervisorInterns() {
         .toLowerCase();
 
       const matchesSearch = text.includes(search.toLowerCase());
-<<<<<<< HEAD
       const matchesTeam =
         teamFilter === "ALL" ||
         (teamFilter === "TEAM" && isBinome(application)) ||
@@ -671,14 +563,6 @@ function SupervisorInterns() {
     degreeFilter,
     academicYearFilter,
   ]);
-=======
-      const matchesDate = isInDateFilter(
-        application.updatedAt || application.createdAt
-      );
-      return matchesSearch && matchesDate;
-    });
-  }, [interns, search, isInDateFilter]);
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
 
   const openCV = async (cvId, fileName) => {
     try {
@@ -830,13 +714,8 @@ function SupervisorInterns() {
 
       <Card>
         <CardBody>
-<<<<<<< HEAD
           <div className="grid gap-3 lg:grid-cols-4">
             <Field label="Search" htmlFor="search" className="lg:col-span-2">
-=======
-          <div className="grid gap-3 lg:grid-cols-3">
-            <Field htmlFor="search" className="lg:col-span-2">
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
               <div className="relative">
                 <Search
                   className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"
@@ -851,7 +730,6 @@ function SupervisorInterns() {
                 />
               </div>
             </Field>
-<<<<<<< HEAD
             <Field label="Mode" htmlFor="teamFilter">
               <Select
                 id="teamFilter"
@@ -930,18 +808,6 @@ function SupervisorInterns() {
                     {option.label}
                   </option>
                 ))}
-=======
-            <Field htmlFor="dateFilter">
-              <Select
-                id="dateFilter"
-                value={dateFilter}
-                onChange={(e) => setDateFilter(e.target.value)}
-              >
-                <option value="ALL">All dates</option>
-                <option value="TODAY">Today</option>
-                <option value="7_DAYS">Last 7 days</option>
-                <option value="30_DAYS">Last 30 days</option>
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
               </Select>
             </Field>
           </div>
@@ -1026,17 +892,6 @@ function SupervisorInterns() {
                         >
                           View {candidate.fullName}
                         </Button>
-<<<<<<< HEAD
-=======
-                        <Button
-                          size="sm"
-                          variant="danger"
-                          iconLeft={AlertTriangle}
-                          onClick={() => openReport(application, candidate)}
-                        >
-                          Report
-                        </Button>
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
                       </div>
                     ))}
                   </div>
@@ -1100,10 +955,7 @@ function SupervisorInterns() {
             setSelectedApplication(null);
           }}
           onOpenCV={openCV}
-<<<<<<< HEAD
           onReport={openReport}
-=======
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
         />
       )}
 

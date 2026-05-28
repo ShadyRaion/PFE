@@ -285,10 +285,6 @@ function App() {
           <Route path="/encadrant/messages" element={<Messages />} />
           <Route path="/encadrant/notifications" element={<Notifications />} />
           <Route path="/encadrant/mon-profile" element={<MonProfile />} />
-<<<<<<< HEAD
-=======
-          <Route path="/encadrant/settings" element={<Settings />} />
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
         </Route>
 
         <Route

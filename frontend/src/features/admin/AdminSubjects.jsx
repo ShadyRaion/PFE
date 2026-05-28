@@ -9,11 +9,8 @@ import {
   CheckCircle2,
   ClipboardList,
   Archive,
-<<<<<<< HEAD
   Clock,
   ArrowRight,
-=======
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
 } from "lucide-react";
 import api from "../../api/axios";
 import ExportButton from "../../components/ExportButton";
@@ -25,7 +22,6 @@ import {
   Input,
   Select,
   Badge,
-<<<<<<< HEAD
   Button,
   EmptyState,
 } from "../../components/ui";
@@ -36,23 +32,15 @@ import {
   matchesDateRange,
   matchesDurationFilter,
 } from "../../utils/filters";
-=======
-  EmptyState,
-} from "../../components/ui";
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
 
 function AdminSubjects() {
   const [subjects, setSubjects] = useState([]);
   const [search, setSearch] = useState("");
   const [archiveFilter, setArchiveFilter] = useState("ALL");
-<<<<<<< HEAD
   const [dateFilter, setDateFilter] = useState(createDateRange("ALL"));
   const [durationFilter, setDurationFilter] = useState("ALL");
   const [applicationFilter, setApplicationFilter] = useState("ALL");
   const [assignmentFilter, setAssignmentFilter] = useState("ALL");
-=======
-  const [dateFilter, setDateFilter] = useState("ALL");
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
   const [message, setMessage] = useState("");
 
   const fetchSubjects = useCallback(async () => {
@@ -68,30 +56,6 @@ function AdminSubjects() {
     queueMicrotask(fetchSubjects);
   }, [fetchSubjects]);
 
-<<<<<<< HEAD
-=======
-  const isInDateFilter = useCallback((date) => {
-    if (dateFilter === "ALL") return true;
-
-    const createdAt = new Date(date);
-    const now = new Date();
-
-    if (dateFilter === "TODAY") {
-      return createdAt.toDateString() === now.toDateString();
-    }
-
-    if (dateFilter === "7_DAYS") {
-      return now - createdAt <= 7 * 24 * 60 * 60 * 1000;
-    }
-
-    if (dateFilter === "30_DAYS") {
-      return now - createdAt <= 30 * 24 * 60 * 60 * 1000;
-    }
-
-    return true;
-  }, [dateFilter]);
-
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
   const countAssignments = (subject) =>
     (subject.applications || []).filter((a) => a.status === "AFFECTED").length;
 
@@ -112,7 +76,6 @@ function AdminSubjects() {
         .toLowerCase();
 
       const matchesSearch = text.includes(search.toLowerCase());
-<<<<<<< HEAD
       const applicationsCount = countApplications(subject);
       const assignmentsCount = countAssignments(subject);
       const matchesDate = matchesDateRange(subject.createdAt, dateFilter);
@@ -128,16 +91,12 @@ function AdminSubjects() {
         assignmentFilter === "ALL" ||
         (assignmentFilter === "HAS" && assignmentsCount > 0) ||
         (assignmentFilter === "NONE" && assignmentsCount === 0);
-=======
-      const matchesDate = isInDateFilter(subject.createdAt);
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
 
       const matchesArchive =
         archiveFilter === "ALL" ||
         (archiveFilter === "ACTIVE" && !subject.archived) ||
         (archiveFilter === "ARCHIVED" && subject.archived);
 
-<<<<<<< HEAD
       return (
         matchesSearch &&
         matchesDate &&
@@ -148,11 +107,6 @@ function AdminSubjects() {
       );
     });
   }, [subjects, search, archiveFilter, dateFilter, durationFilter, applicationFilter, assignmentFilter]);
-=======
-      return matchesSearch && matchesDate && matchesArchive;
-    });
-  }, [subjects, search, archiveFilter, isInDateFilter]);
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
 
   return (
     <div className="space-y-6">
@@ -174,11 +128,7 @@ function AdminSubjects() {
 
       <Card>
         <CardBody>
-<<<<<<< HEAD
           <div className="grid gap-4 lg:grid-cols-6">
-=======
-          <div className="grid gap-4 lg:grid-cols-4">
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
             <Field label="Search" htmlFor="search" className="lg:col-span-2">
               <div className="relative">
                 <Search
@@ -207,7 +157,6 @@ function AdminSubjects() {
               </Select>
             </Field>
 
-<<<<<<< HEAD
             <Field label="Duration" htmlFor="durationFilter">
               <Select
                 id="durationFilter"
@@ -244,20 +193,6 @@ function AdminSubjects() {
               </Select>
             </Field>
             <DateRangeFilter value={dateFilter} onChange={setDateFilter} />
-=======
-            <Field label="Date" htmlFor="dateFilter">
-              <Select
-                id="dateFilter"
-                value={dateFilter}
-                onChange={(e) => setDateFilter(e.target.value)}
-              >
-                <option value="ALL">All dates</option>
-                <option value="TODAY">Today</option>
-                <option value="7_DAYS">Last 7 days</option>
-                <option value="30_DAYS">Last 30 days</option>
-              </Select>
-            </Field>
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
           </div>
         </CardBody>
       </Card>
@@ -294,13 +229,10 @@ function AdminSubjects() {
                         {subject.supervisor?.fullName || "-"}
                       </span>
                     </span>
-<<<<<<< HEAD
                     <span className="inline-flex items-center gap-1.5">
                       <Clock className="h-3.5 w-3.5 text-slate-400" strokeWidth={2.5} />
                       {subject.duration || "N/A"}
                     </span>
-=======
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
                   </div>
 
                   <p className="mt-3 line-clamp-2 text-sm leading-6 text-slate-700">
@@ -327,7 +259,6 @@ function AdminSubjects() {
                   </Badge>
                 </div>
               </div>
-<<<<<<< HEAD
 
               <div className="mt-5 flex flex-wrap items-end justify-between gap-3">
                 <div className="min-w-0 flex-1">
@@ -353,8 +284,6 @@ function AdminSubjects() {
                   </Button>
                 </Link>
               </div>
-=======
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
             </CardBody>
           </Card>
         ))}

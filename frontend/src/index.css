@@ -231,7 +231,6 @@ aside nav p.uppercase {
 
 :root[data-theme="dark"] aside nav a:hover,
 :root[data-theme="dark"] aside nav a:hover span,
-<<<<<<< HEAD
 :root[data-theme="dark"] aside nav a:hover svg,
 :root[data-theme="dark"] aside nav a:hover .text-slate-700 {
   color: var(--stb-blue) !important;
@@ -243,15 +242,6 @@ aside nav p.uppercase {
 :root[data-theme="dark"] aside nav a.bg-cyan-700 svg {
   color: #ffffff !important;
   stroke: #ffffff !important;
-=======
-:root[data-theme="dark"] aside nav a:hover .text-slate-700 {
-  color: var(--stb-blue) !important;
-}
-
-:root[data-theme="dark"] aside nav a.bg-cyan-700,
-:root[data-theme="dark"] aside nav a.bg-cyan-700 span {
-  color: #ffffff !important;
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
 }
 
 :root[data-theme="dark"] .conversation-list-item:hover h2,
@@ -277,7 +267,6 @@ aside nav p.uppercase {
 }
 
 :root[data-theme="dark"] .report-reason-text {
-<<<<<<< HEAD
   background-color: #1e293b !important;
   color: #e2e8f0 !important;
   border-color: #334155 !important;
@@ -379,9 +368,6 @@ aside nav p.uppercase {
 :root[data-theme="dark"] .auth-side-panel .bg-\[\#f1f8fc\],
 :root[data-theme="dark"] .auth-side-panel .bg-cyan-50 {
   background-color: #1e293b !important;
-=======
-  color: #0f172a !important;
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
 }
 
 .docx-preview {

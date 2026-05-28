@@ -15,23 +15,16 @@ import {
   Upload,
   Info,
   Users,
-<<<<<<< HEAD
   Clock,
   GraduationCap,
   Briefcase,
   Languages,
-=======
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
 } from "lucide-react";
 import api from "../../api/axios";
 import {
   PageHeader,
   Card,
   CardBody,
-<<<<<<< HEAD
-=======
-  CardHeader,
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
   Button,
   Field,
   Input,
@@ -40,7 +33,6 @@ import {
   Badge,
   EmptyState,
 } from "../../components/ui";
-<<<<<<< HEAD
 import DateRangeFilter from "../../components/filters/DateRangeFilter";
 import {
   DURATION_FILTERS,
@@ -56,8 +48,6 @@ import {
   getAcademicYearLabel,
   getInternshipTypeLabel,
 } from "../../constants/profileFields";
-=======
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
 
 function SubjectDetailsModal({ subject, onClose, onOpenDocument }) {
   if (!subject) return null;
@@ -75,13 +65,10 @@ function SubjectDetailsModal({ subject, onClose, onOpenDocument }) {
                 <Calendar className="h-3.5 w-3.5" strokeWidth={2.5} />
                 Created on {new Date(subject.createdAt).toLocaleString()}
               </p>
-<<<<<<< HEAD
               <p className="mt-1 inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500">
                 <Clock className="h-3.5 w-3.5" strokeWidth={2.5} />
                 Duration: {subject.duration || "N/A"}
               </p>
-=======
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
             </div>
             <Button variant="secondary" size="sm" iconLeft={X} onClick={onClose}>
               Close
@@ -100,7 +87,6 @@ function SubjectDetailsModal({ subject, onClose, onOpenDocument }) {
 
             <div>
               <p className="text-xs font-black uppercase tracking-widest text-slate-500">
-<<<<<<< HEAD
                 Eligibility
               </p>
               <div className="mt-2 grid gap-2 md:grid-cols-2">
@@ -137,8 +123,6 @@ function SubjectDetailsModal({ subject, onClose, onOpenDocument }) {
 
             <div>
               <p className="text-xs font-black uppercase tracking-widest text-slate-500">
-=======
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
                 Technologies
               </p>
               <div className="mt-2 flex flex-wrap gap-2">
@@ -170,7 +154,6 @@ function SubjectDetailsModal({ subject, onClose, onOpenDocument }) {
             </div>
 
             <div>
-<<<<<<< HEAD
               <p className="inline-flex items-center gap-1.5 text-xs font-black uppercase tracking-widest text-slate-500">
                 <Languages className="h-3.5 w-3.5" strokeWidth={2.5} />
                 Languages
@@ -188,8 +171,6 @@ function SubjectDetailsModal({ subject, onClose, onOpenDocument }) {
             </div>
 
             <div>
-=======
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
               <p className="text-xs font-black uppercase tracking-widest text-slate-500">
                 Documents
               </p>
@@ -251,16 +232,12 @@ function MySubjects() {
   const [detailsSubject, setDetailsSubject] = useState(null);
   const [archiveMode, setArchiveMode] = useState(false);
   const [search, setSearch] = useState("");
-<<<<<<< HEAD
   const [dateFilter, setDateFilter] = useState(createDateRange("ALL"));
   const [durationFilter, setDurationFilter] = useState("ALL");
   const [educationFieldFilter, setEducationFieldFilter] = useState("ALL");
   const [internshipTypeFilter, setInternshipTypeFilter] = useState("ALL");
   const [degreeFilter, setDegreeFilter] = useState("ALL");
   const [academicYearFilter, setAcademicYearFilter] = useState("ALL");
-=======
-  const [dateFilter, setDateFilter] = useState("ALL");
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
   const [editDocuments, setEditDocuments] = useState([]);
   const [savingSubject, setSavingSubject] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(null);
@@ -269,7 +246,6 @@ function MySubjects() {
   const [editForm, setEditForm] = useState({
     title: "",
     description: "",
-<<<<<<< HEAD
     duration: "",
     educationField: "",
     internshipType: "",
@@ -278,10 +254,6 @@ function MySubjects() {
     technologies: "",
     requiredSkills: "",
     languages: "",
-=======
-    technologies: "",
-    requiredSkills: "",
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
   });
 
   const fetchSubjects = useCallback(async () => {
@@ -297,30 +269,6 @@ function MySubjects() {
     queueMicrotask(fetchSubjects);
   }, [fetchSubjects]);
 
-<<<<<<< HEAD
-=======
-  const isInDateFilter = useCallback((date) => {
-    if (dateFilter === "ALL") return true;
-
-    const createdAt = new Date(date);
-    const now = new Date();
-
-    if (dateFilter === "TODAY") {
-      return createdAt.toDateString() === now.toDateString();
-    }
-
-    if (dateFilter === "7_DAYS") {
-      return now - createdAt <= 7 * 24 * 60 * 60 * 1000;
-    }
-
-    if (dateFilter === "30_DAYS") {
-      return now - createdAt <= 30 * 24 * 60 * 60 * 1000;
-    }
-
-    return true;
-  }, [dateFilter]);
-
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
   const visibleSubjects = useMemo(() => {
     return subjects
       .filter((subject) => Boolean(subject.archived) === archiveMode)
@@ -336,7 +284,6 @@ function MySubjects() {
 
         return (
           text.includes(search.toLowerCase()) &&
-<<<<<<< HEAD
           matchesDateRange(subject.createdAt, dateFilter) &&
           matchesDurationFilter(subject.duration, durationFilter) &&
           (educationFieldFilter === "ALL" ||
@@ -362,12 +309,6 @@ function MySubjects() {
     degreeFilter,
     academicYearFilter,
   ]);
-=======
-          isInDateFilter(subject.createdAt)
-        );
-      });
-  }, [subjects, archiveMode, search, isInDateFilter]);
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
 
   const refreshSelectedSubjects = (updatedSubjects) => {
     if (editingSubject) {
@@ -395,7 +336,6 @@ function MySubjects() {
     setEditForm({
       title: subject.title || "",
       description: subject.description || "",
-<<<<<<< HEAD
       duration: subject.duration || "",
       educationField: subject.educationField || "",
       internshipType: subject.internshipType || "",
@@ -416,10 +356,6 @@ function MySubjects() {
           ? current.filter((item) => item !== value)
           : [...current, value],
       };
-=======
-      technologies: (subject.technologies || []).join(", "),
-      requiredSkills: (subject.requiredSkills || []).join(", "),
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
     });
   };
 
@@ -447,14 +383,11 @@ function MySubjects() {
       await api.patch(`/subjects/${editingSubject.id}`, {
         title: editForm.title,
         description: editForm.description,
-<<<<<<< HEAD
         duration: editForm.duration,
         educationField: editForm.educationField,
         internshipType: editForm.internshipType,
         allowedDegreeLevels: editForm.allowedDegreeLevels,
         allowedAcademicYears: editForm.allowedAcademicYears,
-=======
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
         technologies: editForm.technologies
           .split(",")
           .map((item) => item.trim())
@@ -463,13 +396,10 @@ function MySubjects() {
           .split(",")
           .map((item) => item.trim())
           .filter(Boolean),
-<<<<<<< HEAD
         languages: editForm.languages
           .split(",")
           .map((item) => item.trim())
           .filter(Boolean),
-=======
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
       });
 
       await uploadDocuments(editingSubject.id, editDocuments);
@@ -592,13 +522,8 @@ function MySubjects() {
 
       <Card>
         <CardBody>
-<<<<<<< HEAD
           <div className="grid gap-3 md:grid-cols-4">
             <Field label="Search" htmlFor="search" className="md:col-span-2">
-=======
-          <div className="grid gap-3 md:grid-cols-3">
-            <Field htmlFor="search" className="md:col-span-2">
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
               <div className="relative">
                 <Search
                   className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"
@@ -613,7 +538,6 @@ function MySubjects() {
                 />
               </div>
             </Field>
-<<<<<<< HEAD
             <Field label="Duration" htmlFor="durationFilter">
               <Select
                 id="durationFilter"
@@ -684,20 +608,6 @@ function MySubjects() {
               </Select>
             </Field>
             <DateRangeFilter value={dateFilter} onChange={setDateFilter} />
-=======
-            <Field htmlFor="dateFilter">
-              <Select
-                id="dateFilter"
-                value={dateFilter}
-                onChange={(e) => setDateFilter(e.target.value)}
-              >
-                <option value="ALL">All dates</option>
-                <option value="TODAY">Today</option>
-                <option value="7_DAYS">Last 7 days</option>
-                <option value="30_DAYS">Last 30 days</option>
-              </Select>
-            </Field>
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
           </div>
         </CardBody>
       </Card>
@@ -723,7 +633,6 @@ function MySubjects() {
                     <Calendar className="h-3.5 w-3.5" strokeWidth={2.5} />
                     Created on {new Date(subject.createdAt).toLocaleString()}
                   </p>
-<<<<<<< HEAD
                   <p className="mt-1 inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500">
                     <Clock className="h-3.5 w-3.5" strokeWidth={2.5} />
                     Duration: {subject.duration || "N/A"}
@@ -738,8 +647,6 @@ function MySubjects() {
                         : "All degrees"}
                     </Badge>
                   </div>
-=======
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
 
                   <p className="mt-3 line-clamp-2 leading-7 text-sm text-slate-600">
                     {subject.description}
@@ -791,10 +698,7 @@ function MySubjects() {
                       <Button
                         size="sm"
                         variant="secondary"
-<<<<<<< HEAD
                         className="border-2 border-current text-[#062633]"
-=======
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
                         iconLeft={Edit3}
                         onClick={() => openEdit(subject)}
                       >
@@ -803,10 +707,7 @@ function MySubjects() {
                       <Button
                         size="sm"
                         variant="ghost"
-<<<<<<< HEAD
                         className="my-subjects-archive-button border border-slate-500"
-=======
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
                         iconLeft={Archive}
                         onClick={() => archiveSubject(subject.id)}
                       >
@@ -895,7 +796,6 @@ function MySubjects() {
                   />
                 </Field>
 
-<<<<<<< HEAD
                 <Field label="Duration" htmlFor="editDuration">
                   <Select
                     id="editDuration"
@@ -1017,8 +917,6 @@ function MySubjects() {
                   </div>
                 </Field>
 
-=======
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
                 <Field
                   label="Technologies"
                   htmlFor="editTech"
@@ -1053,7 +951,6 @@ function MySubjects() {
                   />
                 </Field>
 
-<<<<<<< HEAD
                 <Field
                   label="Languages"
                   htmlFor="editLanguages"
@@ -1071,8 +968,6 @@ function MySubjects() {
                   />
                 </Field>
 
-=======
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
                 <div className="rounded-2xl border border-[#cfe1e8] bg-slate-50 p-5">
                   <p className="inline-flex items-center gap-1.5 text-sm font-bold text-slate-950">
                     <Paperclip className="h-4 w-4 text-cyan-700" strokeWidth={2.5} />

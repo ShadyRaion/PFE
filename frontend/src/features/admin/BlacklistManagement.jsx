@@ -19,29 +19,18 @@ import {
   CardBody,
   Field,
   Input,
-<<<<<<< HEAD
   Button,
   EmptyState,
 } from "../../components/ui";
 import DateRangeFilter from "../../components/filters/DateRangeFilter";
 import { createDateRange, matchesDateRange } from "../../utils/filters";
-=======
-  Select,
-  Button,
-  EmptyState,
-} from "../../components/ui";
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
 
 function BlacklistManagement() {
   const [blacklist, setBlacklist] = useState([]);
   const [email, setEmail] = useState("");
   const [reason, setReason] = useState("");
   const [search, setSearch] = useState("");
-<<<<<<< HEAD
   const [dateFilter, setDateFilter] = useState(createDateRange("ALL"));
-=======
-  const [dateFilter, setDateFilter] = useState("ALL");
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
   const [message, setMessage] = useState("");
   const [confirmingId, setConfirmingId] = useState(null);
 
@@ -83,33 +72,6 @@ function BlacklistManagement() {
     }
   };
 
-<<<<<<< HEAD
-=======
-  const isInDateFilter = useCallback(
-    (date) => {
-      if (dateFilter === "ALL") return true;
-
-      const createdAt = new Date(date);
-      const now = new Date();
-
-      if (dateFilter === "TODAY") {
-        return createdAt.toDateString() === now.toDateString();
-      }
-
-      if (dateFilter === "7_DAYS") {
-        return now - createdAt <= 7 * 24 * 60 * 60 * 1000;
-      }
-
-      if (dateFilter === "30_DAYS") {
-        return now - createdAt <= 30 * 24 * 60 * 60 * 1000;
-      }
-
-      return true;
-    },
-    [dateFilter]
-  );
-
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
   const filteredBlacklist = useMemo(() => {
     return blacklist.filter((entry) => {
       const text = [
@@ -123,18 +85,11 @@ function BlacklistManagement() {
         .toLowerCase();
 
       return (
-<<<<<<< HEAD
         text.includes(search.toLowerCase()) &&
         matchesDateRange(entry.createdAt, dateFilter)
       );
     });
   }, [blacklist, search, dateFilter]);
-=======
-        text.includes(search.toLowerCase()) && isInDateFilter(entry.createdAt)
-      );
-    });
-  }, [blacklist, search, isInDateFilter]);
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
 
   return (
     <div className="space-y-6">
@@ -226,22 +181,7 @@ function BlacklistManagement() {
               </div>
             </Field>
 
-<<<<<<< HEAD
             <DateRangeFilter value={dateFilter} onChange={setDateFilter} />
-=======
-            <Field label="Date" htmlFor="dateFilter">
-              <Select
-                id="dateFilter"
-                value={dateFilter}
-                onChange={(e) => setDateFilter(e.target.value)}
-              >
-                <option value="ALL">All dates</option>
-                <option value="TODAY">Today</option>
-                <option value="7_DAYS">Last 7 days</option>
-                <option value="30_DAYS">Last 30 days</option>
-              </Select>
-            </Field>
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
           </div>
         </CardBody>
       </Card>
@@ -261,11 +201,7 @@ function BlacklistManagement() {
 
             <tbody className="divide-y divide-[#e2edf2]">
               {filteredBlacklist.map((entry) => (
-<<<<<<< HEAD
                 <tr key={entry.id} className="admin-hover-row transition hover:bg-cyan-50/50">
-=======
-                <tr key={entry.id} className="transition hover:bg-cyan-50/50">
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
                   <td className="px-5 py-3.5">
                     <span className="inline-flex items-center gap-1.5 font-bold text-slate-950">
                       <Mail className="h-3.5 w-3.5 text-slate-400" strokeWidth={2.5} />

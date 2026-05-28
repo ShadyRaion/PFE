@@ -8,10 +8,7 @@ import {
   Users,
   Calendar,
   FileText,
-<<<<<<< HEAD
   Clock,
-=======
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
 } from "lucide-react";
 import api from "../../api/axios";
 import AdminStudentDetails from "./AdminStudentDetails";
@@ -26,7 +23,6 @@ import {
   Badge,
   EmptyState,
 } from "../../components/ui";
-<<<<<<< HEAD
 import DateRangeFilter from "../../components/filters/DateRangeFilter";
 import {
   DURATION_FILTERS,
@@ -34,20 +30,14 @@ import {
   matchesDateRange,
   matchesDurationFilter,
 } from "../../utils/filters";
-=======
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
 
 function AdminAffectations() {
   const [assignments, setAssignments] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
   const [search, setSearch] = useState("");
   const [typeFilter, setTypeFilter] = useState("ALL");
-<<<<<<< HEAD
   const [durationFilter, setDurationFilter] = useState("ALL");
   const [dateFilter, setDateFilter] = useState(createDateRange("ALL"));
-=======
-  const [dateFilter, setDateFilter] = useState("ALL");
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
   const [message, setMessage] = useState("");
 
   const fetchAssignments = useCallback(async () => {
@@ -72,30 +62,6 @@ function AdminAffectations() {
     }
   };
 
-<<<<<<< HEAD
-=======
-  const isInDateFilter = useCallback((date) => {
-    if (dateFilter === "ALL") return true;
-
-    const createdAt = new Date(date);
-    const now = new Date();
-
-    if (dateFilter === "TODAY") {
-      return createdAt.toDateString() === now.toDateString();
-    }
-
-    if (dateFilter === "7_DAYS") {
-      return now - createdAt <= 7 * 24 * 60 * 60 * 1000;
-    }
-
-    if (dateFilter === "30_DAYS") {
-      return now - createdAt <= 30 * 24 * 60 * 60 * 1000;
-    }
-
-    return true;
-  }, [dateFilter]);
-
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
   const filteredAssignments = useMemo(() => {
     return assignments.filter((assignment) => {
       const isBinome = Boolean(assignment.binome);
@@ -117,30 +83,20 @@ function AdminAffectations() {
         .toLowerCase();
 
       const matchesSearch = haystack.includes(search.toLowerCase());
-<<<<<<< HEAD
       const matchesDate = matchesDateRange(assignment.updatedAt, dateFilter);
       const matchesDuration = matchesDurationFilter(
         assignment.subject?.duration,
         durationFilter
       );
-=======
-      const matchesDate = isInDateFilter(assignment.updatedAt);
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
 
       const matchesType =
         typeFilter === "ALL" ||
         (typeFilter === "BINOME" && isBinome) ||
         (typeFilter === "SOLO" && !isBinome);
 
-<<<<<<< HEAD
       return matchesSearch && matchesDate && matchesType && matchesDuration;
     });
   }, [assignments, search, typeFilter, dateFilter, durationFilter]);
-=======
-      return matchesSearch && matchesDate && matchesType;
-    });
-  }, [assignments, search, typeFilter, isInDateFilter]);
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
 
   return (
     <div className="space-y-6">
@@ -165,11 +121,7 @@ function AdminAffectations() {
 
       <Card>
         <CardBody>
-<<<<<<< HEAD
           <div className="grid gap-4 lg:grid-cols-5">
-=======
-          <div className="grid gap-4 lg:grid-cols-4">
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
             <Field label="Search" htmlFor="search" className="lg:col-span-2">
               <div className="relative">
                 <Search
@@ -198,7 +150,6 @@ function AdminAffectations() {
               </Select>
             </Field>
 
-<<<<<<< HEAD
             <Field label="Duration" htmlFor="durationFilter">
               <Select
                 id="durationFilter"
@@ -213,20 +164,6 @@ function AdminAffectations() {
               </Select>
             </Field>
             <DateRangeFilter value={dateFilter} onChange={setDateFilter} />
-=======
-            <Field label="Date" htmlFor="dateFilter">
-              <Select
-                id="dateFilter"
-                value={dateFilter}
-                onChange={(e) => setDateFilter(e.target.value)}
-              >
-                <option value="ALL">All dates</option>
-                <option value="TODAY">Today</option>
-                <option value="7_DAYS">Last 7 days</option>
-                <option value="30_DAYS">Last 30 days</option>
-              </Select>
-            </Field>
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
           </div>
         </CardBody>
       </Card>
@@ -258,13 +195,10 @@ function AdminAffectations() {
                         <Calendar className="h-3.5 w-3.5 text-slate-400" strokeWidth={2.5} />
                         {new Date(assignment.updatedAt).toLocaleDateString()}
                       </span>
-<<<<<<< HEAD
                       <span className="inline-flex items-center gap-1.5">
                         <Clock className="h-3.5 w-3.5 text-slate-400" strokeWidth={2.5} />
                         {assignment.subject?.duration || "N/A"}
                       </span>
-=======
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
                     </div>
 
                     <div className="mt-4 flex flex-wrap gap-2">

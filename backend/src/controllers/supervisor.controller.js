@@ -1141,27 +1141,17 @@ const completeAffectation = async (req, res) => {
 
 const reportStudent = async (req, res) => {
   try {
-<<<<<<< HEAD
     const { studentId, reason } = req.body || {};
     const cleanReason = reason?.trim();
 
     if (!studentId || !cleanReason) {
       return res.status(400).json({
         message: "Etudiant et raison requis.",
-=======
-    const { applicationId, studentId, reason } = req.body || {};
-    const cleanReason = reason?.trim();
-
-    if (!applicationId || !studentId || !cleanReason) {
-      return res.status(400).json({
-        message: "Etudiant, affectation et raison requis.",
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
       });
     }
 
     const application = await prisma.application.findFirst({
       where: {
-<<<<<<< HEAD
         status: {
           in: ["AFFECTED", "COMPLETED"],
         },
@@ -1176,13 +1166,6 @@ const reportStudent = async (req, res) => {
             },
           },
         ],
-=======
-        id: applicationId,
-        status: "AFFECTED",
-        subject: {
-          supervisorId: req.user.id,
-        },
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
       },
       include: {
         student: true,
@@ -1198,11 +1181,7 @@ const reportStudent = async (req, res) => {
 
     if (!application) {
       return res.status(404).json({
-<<<<<<< HEAD
         message: "Etudiant introuvable parmi vos stagiaires.",
-=======
-        message: "Affectation introuvable ou non active.",
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
       });
     }
 
@@ -1219,10 +1198,6 @@ const reportStudent = async (req, res) => {
         "id",
         "supervisorId",
         "studentId",
-<<<<<<< HEAD
-=======
-        "applicationId",
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
         "reason",
         "createdAt"
       )
@@ -1230,10 +1205,6 @@ const reportStudent = async (req, res) => {
         ${randomUUID()},
         ${req.user.id},
         ${studentId},
-<<<<<<< HEAD
-=======
-        ${application.id},
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
         ${cleanReason},
         NOW()
       )
@@ -1280,12 +1251,6 @@ const reportStudent = async (req, res) => {
       entity: "STUDENT_REPORT",
       entityId: report.id,
       details: {
-<<<<<<< HEAD
-=======
-        applicationId: application.id,
-        subjectId: application.subjectId,
-        subjectTitle: application.subject.title,
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
         studentId,
         studentName: reportedStudent?.fullName || null,
         reason: cleanReason,

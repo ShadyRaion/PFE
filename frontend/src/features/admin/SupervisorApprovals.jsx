@@ -23,23 +23,16 @@ import {
   EmptyState,
   LoadingState,
 } from "../../components/ui";
-<<<<<<< HEAD
 import DateRangeFilter from "../../components/filters/DateRangeFilter";
 import { createDateRange, matchesDateRange } from "../../utils/filters";
-=======
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
 
 function SupervisorApprovals() {
   const [supervisors, setSupervisors] = useState([]);
   const [search, setSearch] = useState("");
-<<<<<<< HEAD
   const [dateFilter, setDateFilter] = useState(createDateRange("ALL"));
   const [departmentFilter, setDepartmentFilter] = useState("ALL");
   const [rankFilter, setRankFilter] = useState("ALL");
   const [divisionFilter, setDivisionFilter] = useState("ALL");
-=======
-  const [dateFilter, setDateFilter] = useState("ALL");
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(true);
   const [actionLoadingId, setActionLoadingId] = useState(null);
@@ -88,13 +81,6 @@ function SupervisorApprovals() {
 
       setMessage("Supervisor approved.");
 
-<<<<<<< HEAD
-=======
-      setSupervisors((prev) =>
-        prev.filter((supervisor) => supervisor.id !== id)
-      );
-
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
       await fetchPendingSupervisors();
       refreshAlerts();
     } catch {
@@ -126,31 +112,6 @@ function SupervisorApprovals() {
     }
   };
 
-<<<<<<< HEAD
-=======
-  const isInDateFilter = useCallback((date) => {
-    if (!date) return true;
-    if (dateFilter === "ALL") return true;
-
-    const createdAt = new Date(date);
-    const now = new Date();
-
-    if (dateFilter === "TODAY") {
-      return createdAt.toDateString() === now.toDateString();
-    }
-
-    if (dateFilter === "7_DAYS") {
-      return now - createdAt <= 7 * 24 * 60 * 60 * 1000;
-    }
-
-    if (dateFilter === "30_DAYS") {
-      return now - createdAt <= 30 * 24 * 60 * 60 * 1000;
-    }
-
-    return true;
-  }, [dateFilter]);
-
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
   const filteredSupervisors = useMemo(() => {
     return supervisors.filter((supervisor) => {
       const text = [
@@ -168,7 +129,6 @@ function SupervisorApprovals() {
 
       return (
         text.includes(search.toLowerCase()) &&
-<<<<<<< HEAD
         matchesDateRange(supervisor.createdAt, dateFilter) &&
         (departmentFilter === "ALL" || supervisor.department === departmentFilter) &&
         (rankFilter === "ALL" || supervisor.rank === rankFilter) &&
@@ -180,12 +140,6 @@ function SupervisorApprovals() {
   const departmentOptions = Array.from(new Set(supervisors.map((item) => item.department).filter(Boolean)));
   const rankOptions = Array.from(new Set(supervisors.map((item) => item.rank).filter(Boolean)));
   const divisionOptions = Array.from(new Set(supervisors.map((item) => item.division).filter(Boolean)));
-=======
-        isInDateFilter(supervisor.createdAt)
-      );
-    });
-  }, [supervisors, search, isInDateFilter]);
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
 
   if (loading) {
     return (
@@ -217,11 +171,7 @@ function SupervisorApprovals() {
 
       <Card>
         <CardBody>
-<<<<<<< HEAD
           <div className="grid gap-4 lg:grid-cols-6">
-=======
-          <div className="grid gap-4 lg:grid-cols-3">
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
             <Field label="Search" htmlFor="search" className="lg:col-span-2">
               <div className="relative">
                 <Search
@@ -238,7 +188,6 @@ function SupervisorApprovals() {
               </div>
             </Field>
 
-<<<<<<< HEAD
             <Field label="Department" htmlFor="departmentFilter">
               <Select
                 id="departmentFilter"
@@ -276,20 +225,6 @@ function SupervisorApprovals() {
               </Select>
             </Field>
             <DateRangeFilter value={dateFilter} onChange={setDateFilter} />
-=======
-            <Field label="Date" htmlFor="dateFilter">
-              <Select
-                id="dateFilter"
-                value={dateFilter}
-                onChange={(e) => setDateFilter(e.target.value)}
-              >
-                <option value="ALL">All dates</option>
-                <option value="TODAY">Today</option>
-                <option value="7_DAYS">Last 7 days</option>
-                <option value="30_DAYS">Last 30 days</option>
-              </Select>
-            </Field>
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
           </div>
         </CardBody>
       </Card>
@@ -304,7 +239,6 @@ function SupervisorApprovals() {
                     <h2 className="text-xl font-black text-slate-950">
                       {supervisor.fullName}
                     </h2>
-<<<<<<< HEAD
                     <Badge
                       variant={
                         supervisor.supervisorStatus === "REJECTED"
@@ -317,10 +251,6 @@ function SupervisorApprovals() {
                       {supervisor.supervisorStatus === "REJECTED"
                         ? "Rejected"
                         : "Pending"}
-=======
-                    <Badge variant="warning" size="sm" icon={Clock}>
-                      Pending
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
                     </Badge>
                   </div>
 
@@ -354,7 +284,6 @@ function SupervisorApprovals() {
                   </div>
                 </div>
 
-<<<<<<< HEAD
                 {supervisor.supervisorStatus !== "REJECTED" && (
                   <div className="flex shrink-0 gap-2">
                     <Button
@@ -378,29 +307,6 @@ function SupervisorApprovals() {
                     </Button>
                   </div>
                 )}
-=======
-                <div className="flex shrink-0 gap-2">
-                  <Button
-                    variant="success"
-                    size="sm"
-                    iconLeft={Check}
-                    disabled={actionLoadingId === supervisor.id}
-                    onClick={() => approveSupervisor(supervisor.id)}
-                  >
-                    {actionLoadingId === supervisor.id ? "..." : "Approve"}
-                  </Button>
-
-                  <Button
-                    variant="danger"
-                    size="sm"
-                    iconLeft={X}
-                    disabled={actionLoadingId === supervisor.id}
-                    onClick={() => rejectSupervisor(supervisor.id)}
-                  >
-                    {actionLoadingId === supervisor.id ? "..." : "Reject"}
-                  </Button>
-                </div>
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
               </div>
             </CardBody>
           </Card>

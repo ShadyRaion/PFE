@@ -3,11 +3,8 @@ import { Link } from "react-router-dom";
 import { UserCog, Search, AlertCircle, Mail, Calendar } from "lucide-react";
 import api from "../../api/axios";
 import ExportButton from "../../components/ExportButton";
-<<<<<<< HEAD
 import DateRangeFilter from "../../components/filters/DateRangeFilter";
 import { createDateRange, matchesDateRange } from "../../utils/filters";
-=======
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
 import {
   PageHeader,
   Card,
@@ -15,15 +12,10 @@ import {
   Field,
   Input,
   Select,
-<<<<<<< HEAD
-=======
-  Badge,
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
   EmptyState,
   LoadingState,
 } from "../../components/ui";
 
-<<<<<<< HEAD
 function AdminSupervisors() {
   const [supervisors, setSupervisors] = useState([]);
   const [search, setSearch] = useState("");
@@ -31,27 +23,6 @@ function AdminSupervisors() {
   const [departmentFilter, setDepartmentFilter] = useState("ALL");
   const [rankFilter, setRankFilter] = useState("ALL");
   const [divisionFilter, setDivisionFilter] = useState("ALL");
-=======
-function approvalVariant(status) {
-  if (status === "APPROVED") return "success";
-  if (status === "PENDING") return "warning";
-  if (status === "REJECTED") return "danger";
-  return "neutral";
-}
-
-function approvalLabel(status) {
-  if (status === "APPROVED") return "Approved";
-  if (status === "PENDING") return "Pending";
-  if (status === "REJECTED") return "Rejected";
-  return status || "-";
-}
-
-function AdminSupervisors() {
-  const [supervisors, setSupervisors] = useState([]);
-  const [search, setSearch] = useState("");
-  const [dateFilter, setDateFilter] = useState("ALL");
-  const [approvalFilter, setApprovalFilter] = useState("ALL");
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(true);
 
@@ -83,31 +54,6 @@ function AdminSupervisors() {
     queueMicrotask(fetchSupervisors);
   }, [fetchSupervisors]);
 
-<<<<<<< HEAD
-=======
-  const isInDateFilter = useCallback((date) => {
-    if (!date) return true;
-    if (dateFilter === "ALL") return true;
-
-    const createdAt = new Date(date);
-    const now = new Date();
-
-    if (dateFilter === "TODAY") {
-      return createdAt.toDateString() === now.toDateString();
-    }
-
-    if (dateFilter === "7_DAYS") {
-      return now - createdAt <= 7 * 24 * 60 * 60 * 1000;
-    }
-
-    if (dateFilter === "30_DAYS") {
-      return now - createdAt <= 30 * 24 * 60 * 60 * 1000;
-    }
-
-    return true;
-  }, [dateFilter]);
-
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
   const getApprovalStatus = (supervisor) => {
     return (
       supervisor.supervisorStatus ||
@@ -125,13 +71,9 @@ function AdminSupervisors() {
         supervisor.fullName,
         supervisor.email,
         supervisor.phone,
-<<<<<<< HEAD
         supervisor.department,
         supervisor.rank,
         supervisor.division,
-=======
-        status,
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
         supervisor.createdAt,
       ]
         .filter(Boolean)
@@ -140,7 +82,6 @@ function AdminSupervisors() {
 
       const matchesSearch = text.includes(search.toLowerCase());
 
-<<<<<<< HEAD
       const matchesDate = matchesDateRange(supervisor.createdAt, dateFilter);
 
       const matchesApproval = status === "APPROVED";
@@ -164,16 +105,6 @@ function AdminSupervisors() {
   const departmentOptions = Array.from(new Set(supervisors.map((item) => item.department).filter(Boolean)));
   const rankOptions = Array.from(new Set(supervisors.map((item) => item.rank).filter(Boolean)));
   const divisionOptions = Array.from(new Set(supervisors.map((item) => item.division).filter(Boolean)));
-=======
-      const matchesDate = isInDateFilter(supervisor.createdAt);
-
-      const matchesApproval =
-        approvalFilter === "ALL" || status === approvalFilter;
-
-      return matchesSearch && matchesDate && matchesApproval;
-    });
-  }, [supervisors, search, isInDateFilter, approvalFilter]);
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
 
   if (loading) {
     return (
@@ -211,11 +142,7 @@ function AdminSupervisors() {
 
       <Card>
         <CardBody>
-<<<<<<< HEAD
           <div className="grid gap-4 lg:grid-cols-6">
-=======
-          <div className="grid gap-4 lg:grid-cols-4">
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
             <Field label="Search" htmlFor="search" className="lg:col-span-2">
               <div className="relative">
                 <Search
@@ -232,7 +159,6 @@ function AdminSupervisors() {
               </div>
             </Field>
 
-<<<<<<< HEAD
             <Field label="Department" htmlFor="departmentFilter">
               <Select
                 id="departmentFilter"
@@ -273,33 +199,6 @@ function AdminSupervisors() {
             </Field>
 
             <DateRangeFilter value={dateFilter} onChange={setDateFilter} />
-=======
-            <Field label="Status" htmlFor="approvalFilter">
-              <Select
-                id="approvalFilter"
-                value={approvalFilter}
-                onChange={(e) => setApprovalFilter(e.target.value)}
-              >
-                <option value="ALL">All statuses</option>
-                <option value="APPROVED">Approved</option>
-                <option value="PENDING">Pending</option>
-                <option value="REJECTED">Rejected</option>
-              </Select>
-            </Field>
-
-            <Field label="Date" htmlFor="dateFilter">
-              <Select
-                id="dateFilter"
-                value={dateFilter}
-                onChange={(e) => setDateFilter(e.target.value)}
-              >
-                <option value="ALL">All dates</option>
-                <option value="TODAY">Today</option>
-                <option value="7_DAYS">Last 7 days</option>
-                <option value="30_DAYS">Last 30 days</option>
-              </Select>
-            </Field>
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
           </div>
         </CardBody>
       </Card>
@@ -313,26 +212,14 @@ function AdminSupervisors() {
                 <th className="px-5 py-3.5">Email</th>
                 <th className="px-5 py-3.5">Department</th>
                 <th className="px-5 py-3.5">Rank</th>
-<<<<<<< HEAD
                 <th className="px-5 py-3.5">Division</th>
-=======
-                <th className="px-5 py-3.5">Status</th>
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
                 <th className="px-5 py-3.5">Registration date</th>
               </tr>
             </thead>
 
             <tbody className="divide-y divide-[#e2edf2]">
-<<<<<<< HEAD
               {filteredSupervisors.map((supervisor) => (
                   <tr key={supervisor.id} className="admin-hover-row transition hover:bg-cyan-50/50">
-=======
-              {filteredSupervisors.map((supervisor) => {
-                const status = getApprovalStatus(supervisor);
-
-                return (
-                  <tr key={supervisor.id} className="transition hover:bg-cyan-50/50">
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
                     <td className="px-5 py-3.5">
                       <Link
                         to={`/admin/users/${supervisor.id}`}
@@ -366,17 +253,11 @@ function AdminSupervisors() {
                     </td>
 
                     <td className="px-5 py-3.5">
-<<<<<<< HEAD
                       <span className="text-sm text-slate-600">
                         {supervisor.division || (
                           <span className="text-slate-400">-</span>
                         )}
                       </span>
-=======
-                      <Badge variant={approvalVariant(status)} size="sm">
-                        {approvalLabel(status)}
-                      </Badge>
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
                     </td>
 
                     <td className="px-5 py-3.5">
@@ -392,12 +273,7 @@ function AdminSupervisors() {
                       </span>
                     </td>
                   </tr>
-<<<<<<< HEAD
               ))}
-=======
-                );
-              })}
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
             </tbody>
           </table>
         </div>

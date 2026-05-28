@@ -10,10 +10,7 @@ import {
   User,
   ArrowRight,
   GraduationCap,
-<<<<<<< HEAD
   Clock,
-=======
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
 } from "lucide-react";
 import api from "../../api/axios";
 import useSessionUser from "../../hooks/useSessionUser";
@@ -34,13 +31,10 @@ import {
   Select,
   Button,
 } from "../../components/ui";
-<<<<<<< HEAD
 import {
   DURATION_FILTERS,
   matchesDurationFilter,
 } from "../../utils/filters";
-=======
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
 
 function CatalogSubjects() {
   const navigate = useNavigate();
@@ -56,11 +50,7 @@ function CatalogSubjects() {
 
   const [subjects, setSubjects] = useState([]);
   const [search, setSearch] = useState("");
-<<<<<<< HEAD
   const [durationFilter, setDurationFilter] = useState("ALL");
-=======
-  const [dateFilter, setDateFilter] = useState("ALL");
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
   const [scoreFilter, setScoreFilter] = useState("ALL");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(true);
@@ -100,28 +90,6 @@ function CatalogSubjects() {
     return matchedSkills.includes(String(skill).toLowerCase());
   };
 
-<<<<<<< HEAD
-=======
-  const isInDateFilter = useCallback(
-    (date) => {
-      if (dateFilter === "ALL") return true;
-      const createdAt = new Date(date);
-      const now = new Date();
-      if (dateFilter === "TODAY") {
-        return createdAt.toDateString() === now.toDateString();
-      }
-      if (dateFilter === "7_DAYS") {
-        return now - createdAt <= 7 * 24 * 60 * 60 * 1000;
-      }
-      if (dateFilter === "30_DAYS") {
-        return now - createdAt <= 30 * 24 * 60 * 60 * 1000;
-      }
-      return true;
-    },
-    [dateFilter]
-  );
-
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
   const isInScoreFilter = useCallback(
     (score) => {
       const value = Number(score || 0);
@@ -149,7 +117,6 @@ function CatalogSubjects() {
         .toLowerCase();
 
       const matchesSearch = text.includes(search.toLowerCase());
-<<<<<<< HEAD
       const matchesScore = isInScoreFilter(subject.score);
       const matchesDuration = matchesDurationFilter(
         subject.duration,
@@ -159,14 +126,6 @@ function CatalogSubjects() {
       return matchesSearch && matchesScore && matchesDuration;
     });
   }, [subjects, search, isInScoreFilter, durationFilter]);
-=======
-      const matchesDate = isInDateFilter(subject.createdAt);
-      const matchesScore = isInScoreFilter(subject.score);
-
-      return matchesSearch && matchesDate && matchesScore;
-    });
-  }, [subjects, search, isInDateFilter, isInScoreFilter]);
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
 
   return (
     <div className="space-y-6">
@@ -241,7 +200,6 @@ function CatalogSubjects() {
               </Select>
             </Field>
 
-<<<<<<< HEAD
             <Field label="Duration" htmlFor="duration">
               <Select
                 id="duration"
@@ -253,18 +211,6 @@ function CatalogSubjects() {
                     {option.label}
                   </option>
                 ))}
-=======
-            <Field label="Date" htmlFor="date">
-              <Select
-                id="date"
-                value={dateFilter}
-                onChange={(e) => setDateFilter(e.target.value)}
-              >
-                <option value="ALL">All dates</option>
-                <option value="TODAY">Today</option>
-                <option value="7_DAYS">Last 7 days</option>
-                <option value="30_DAYS">Last 30 days</option>
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
               </Select>
             </Field>
           </div>
@@ -337,13 +283,10 @@ function CatalogSubjects() {
                       <Calendar className="h-3.5 w-3.5" strokeWidth={2.5} />
                       {new Date(subject.createdAt).toLocaleDateString()}
                     </p>
-<<<<<<< HEAD
                     <p className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500">
                       <Clock className="h-3.5 w-3.5" strokeWidth={2.5} />
                       {subject.duration || "N/A"}
                     </p>
-=======
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
                     {subject.documents?.length > 0 && (
                       <span className="inline-flex items-center gap-1 text-xs font-semibold text-cyan-700">
                         <FileText className="h-3.5 w-3.5" strokeWidth={2.5} />

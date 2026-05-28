@@ -3,12 +3,9 @@ import { Users, Search, AlertCircle, GraduationCap, Mail, Calendar } from "lucid
 import api from "../../api/axios";
 import AdminStudentDetails from "./AdminStudentDetails";
 import ExportButton from "../../components/ExportButton";
-<<<<<<< HEAD
 import DateRangeFilter from "../../components/filters/DateRangeFilter";
 import { DEGREE_LEVELS, INTERNSHIP_TYPES } from "../../constants/profileFields";
 import { createDateRange, matchesDateRange } from "../../utils/filters";
-=======
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
 import {
   PageHeader,
   Card,
@@ -23,14 +20,9 @@ function AdminStudents() {
   const [students, setStudents] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
   const [search, setSearch] = useState("");
-<<<<<<< HEAD
   const [dateFilter, setDateFilter] = useState(createDateRange("ALL"));
   const [degreeFilter, setDegreeFilter] = useState("ALL");
   const [internshipFilter, setInternshipFilter] = useState("ALL");
-=======
-  const [dateFilter, setDateFilter] = useState("ALL");
-  const [profileFilter, setProfileFilter] = useState("ALL");
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
   const [message, setMessage] = useState("");
 
   const fetchStudents = useCallback(async () => {
@@ -55,30 +47,6 @@ function AdminStudents() {
     }
   };
 
-<<<<<<< HEAD
-=======
-  const isInDateFilter = useCallback((date) => {
-    if (dateFilter === "ALL") return true;
-
-    const createdAt = new Date(date);
-    const now = new Date();
-
-    if (dateFilter === "TODAY") {
-      return createdAt.toDateString() === now.toDateString();
-    }
-
-    if (dateFilter === "7_DAYS") {
-      return now - createdAt <= 7 * 24 * 60 * 60 * 1000;
-    }
-
-    if (dateFilter === "30_DAYS") {
-      return now - createdAt <= 30 * 24 * 60 * 60 * 1000;
-    }
-
-    return true;
-  }, [dateFilter]);
-
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
   const filteredStudents = useMemo(() => {
     return students.filter((student) => {
       const text = [
@@ -93,7 +61,6 @@ function AdminStudents() {
         .toLowerCase();
 
       const matchesSearch = text.includes(search.toLowerCase());
-<<<<<<< HEAD
       const matchesDate = matchesDateRange(student.createdAt, dateFilter);
       const matchesDegree =
         degreeFilter === "ALL" || student.degreeLevel === degreeFilter;
@@ -104,21 +71,6 @@ function AdminStudents() {
       return matchesSearch && matchesDate && matchesDegree && matchesInternship;
     });
   }, [students, search, dateFilter, degreeFilter, internshipFilter]);
-=======
-      const matchesDate = isInDateFilter(student.createdAt);
-
-      const completedProfile =
-        Boolean(student.university) && Boolean(student.specialty);
-
-      const matchesProfile =
-        profileFilter === "ALL" ||
-        (profileFilter === "COMPLETE" && completedProfile) ||
-        (profileFilter === "INCOMPLETE" && !completedProfile);
-
-      return matchesSearch && matchesDate && matchesProfile;
-    });
-  }, [students, search, isInDateFilter, profileFilter]);
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
 
   return (
     <div className="space-y-6">
@@ -140,11 +92,7 @@ function AdminStudents() {
 
       <Card>
         <CardBody>
-<<<<<<< HEAD
           <div className="grid gap-4 lg:grid-cols-5">
-=======
-          <div className="grid gap-4 lg:grid-cols-4">
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
             <Field label="Search" htmlFor="search" className="lg:col-span-2">
               <div className="relative">
                 <Search
@@ -161,7 +109,6 @@ function AdminStudents() {
               </div>
             </Field>
 
-<<<<<<< HEAD
             <Field label="Degree" htmlFor="degreeFilter">
               <Select
                 id="degreeFilter"
@@ -189,32 +136,6 @@ function AdminStudents() {
             </Field>
 
             <DateRangeFilter value={dateFilter} onChange={setDateFilter} />
-=======
-            <Field label="Profile" htmlFor="profileFilter">
-              <Select
-                id="profileFilter"
-                value={profileFilter}
-                onChange={(e) => setProfileFilter(e.target.value)}
-              >
-                <option value="ALL">All profiles</option>
-                <option value="COMPLETE">Complete profile</option>
-                <option value="INCOMPLETE">Incomplete profile</option>
-              </Select>
-            </Field>
-
-            <Field label="Date" htmlFor="dateFilter">
-              <Select
-                id="dateFilter"
-                value={dateFilter}
-                onChange={(e) => setDateFilter(e.target.value)}
-              >
-                <option value="ALL">All dates</option>
-                <option value="TODAY">Today</option>
-                <option value="7_DAYS">Last 7 days</option>
-                <option value="30_DAYS">Last 30 days</option>
-              </Select>
-            </Field>
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
           </div>
         </CardBody>
       </Card>
@@ -235,11 +156,7 @@ function AdminStudents() {
 
             <tbody className="divide-y divide-[#e2edf2]">
               {filteredStudents.map((student) => (
-<<<<<<< HEAD
                 <tr key={student.id} className="admin-hover-row transition hover:bg-cyan-50/50">
-=======
-                <tr key={student.id} className="transition hover:bg-cyan-50/50">
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
                   <td className="px-5 py-3.5">
                     <button
                       onClick={() => openUser(student.id)}

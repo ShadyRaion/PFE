@@ -31,15 +31,10 @@ function CreateSubject() {
   const [form, setForm] = useState({
     title: "",
     description: "",
-<<<<<<< HEAD
     duration: "",
     technologies: "",
     requiredSkills: "",
     languages: "",
-=======
-    technologies: "",
-    requiredSkills: "",
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
     educationField: "",
     internshipType: "",
     allowedDegreeLevels: [],
@@ -110,10 +105,7 @@ function CreateSubject() {
       const res = await api.post("/subjects", {
         title: form.title,
         description: form.description,
-<<<<<<< HEAD
         duration: form.duration,
-=======
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
         educationField: form.educationField,
         internshipType: form.internshipType,
         allowedDegreeLevels: form.allowedDegreeLevels,
@@ -126,13 +118,10 @@ function CreateSubject() {
           .split(",")
           .map((item) => item.trim())
           .filter(Boolean),
-<<<<<<< HEAD
         languages: form.languages
           .split(",")
           .map((item) => item.trim())
           .filter(Boolean),
-=======
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
       });
 
       const subject = res.data.subject || res.data;
@@ -143,15 +132,10 @@ function CreateSubject() {
       setForm({
         title: "",
         description: "",
-<<<<<<< HEAD
         duration: "",
         technologies: "",
         requiredSkills: "",
         languages: "",
-=======
-        technologies: "",
-        requiredSkills: "",
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
         educationField: "",
         internshipType: "",
         allowedDegreeLevels: [],
@@ -218,7 +202,6 @@ function CreateSubject() {
               />
             </Field>
 
-<<<<<<< HEAD
             <Field label="Duration" htmlFor="duration" required>
               <Select
                 id="duration"
@@ -237,8 +220,6 @@ function CreateSubject() {
               </Select>
             </Field>
 
-=======
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
             <Field
               label="Education field"
               htmlFor="educationField"
@@ -351,7 +332,6 @@ function CreateSubject() {
               />
             </Field>
 
-<<<<<<< HEAD
             <Field
               label="Languages"
               htmlFor="languages"
@@ -365,8 +345,6 @@ function CreateSubject() {
               />
             </Field>
 
-=======
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
             <div className="rounded-2xl border-2 border-dashed border-[#cfe1e8] bg-slate-50 p-6">
               <div className="flex items-start gap-3">
                 <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-cyan-50 text-cyan-700">

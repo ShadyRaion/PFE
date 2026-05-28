@@ -42,11 +42,7 @@ function SupervisorLogin() {
     <div className="grid min-h-screen bg-[#f1f8fc] lg:grid-cols-2">
       <HeaderControls className="fixed right-6 top-5 z-20" />
 
-<<<<<<< HEAD
       <section className="auth-side-panel hidden border-r border-[#b9dceb] bg-[linear-gradient(145deg,#ffffff_0%,#f1f8fc_52%,#dff1fa_100%)] p-12 lg:flex lg:flex-col lg:justify-between">
-=======
-      <section className="hidden border-r border-[#b9dceb] bg-[linear-gradient(145deg,#ffffff_0%,#f1f8fc_52%,#dff1fa_100%)] p-12 lg:flex lg:flex-col lg:justify-between">
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
         <div>
           <BrandLogo size="lg" />
 

@@ -9,6 +9,7 @@ const {
 
 const {
   getActiveBinome,
+  getApplicationCvRequirement,
   getSavedScoreForStudentSubject,
   attachSavedScoresToApplications,
   recalculateScoresForStudent,
@@ -43,6 +44,36 @@ const getUserAffectedApplication = async (userId) => {
           },
         },
       ],
+    },
+  });
+};
+
+const getUserActiveApplication = async (userId) => {
+  return prisma.application.findFirst({
+    where: {
+      status: {
+        in: ACTIVE_APPLICATION_STATUSES,
+      },
+      OR: [
+        {
+          studentId: userId,
+        },
+        {
+          binome: {
+            OR: [
+              {
+                student1Id: userId,
+              },
+              {
+                student2Id: userId,
+              },
+            ],
+          },
+        },
+      ],
+    },
+    include: {
+      subject: true,
     },
   });
 };
@@ -281,8 +312,6 @@ const createApplication = async (req, res) => {
       });
     }
 
-    await recalculateScoresForStudent(req.user.id);
-
     const activeBinome = await getActiveBinome(req.user.id);
 
     let finalBinome = null;
@@ -397,6 +426,49 @@ const createApplication = async (req, res) => {
       });
     }
 
+    const activeApplication = await getUserActiveApplication(req.user.id);
+
+    if (activeApplication) {
+      return res.status(400).json({
+        message:
+          "You already have an active application for another subject. Only one active application is allowed.",
+        code: "ACTIVE_APPLICATION_EXISTS",
+      });
+    }
+
+    if (finalBinome) {
+      const partnerId =
+        finalBinome.student1Id === req.user.id
+          ? finalBinome.student2Id
+          : finalBinome.student1Id;
+      const partnerActiveApplication = await getUserActiveApplication(partnerId);
+
+      if (partnerActiveApplication) {
+        const isSameSubject = partnerActiveApplication.subjectId === subjectId;
+
+        return res.status(400).json({
+          message: isSameSubject
+            ? "Your team member has already applied to this subject."
+            : "Your team member already has an active application for another subject. Only one active application is allowed.",
+          code: isSameSubject
+            ? "TEAM_MEMBER_ALREADY_APPLIED_THIS_SUBJECT"
+            : "TEAM_MEMBER_ACTIVE_APPLICATION_EXISTS",
+        });
+      }
+    }
+
+    const cvRequirement = await getApplicationCvRequirement(req.user.id);
+
+    if (!cvRequirement.ready) {
+      return res.status(400).json({
+        message: cvRequirement.message,
+        code: "CV_REQUIRED",
+        cvRequirement,
+      });
+    }
+
+    await recalculateScoresForStudent(req.user.id);
+
     const savedScore = await getSavedScoreForStudentSubject({
       studentId: req.user.id,
       subjectId,
@@ -405,6 +477,7 @@ const createApplication = async (req, res) => {
     if ((savedScore.score || 0) < MIN_APPLICATION_SCORE) {
       return res.status(400).json({
         message: `Votre score est de ${savedScore.score || 0}%. Vous devez avoir au moins ${MIN_APPLICATION_SCORE}% pour candidater à ce sujet.`,
+        code: "SCORE_TOO_LOW",
         score: savedScore.score || 0,
         matchedSkills: savedScore.matchedSkills || [],
         missingSkills: savedScore.missingSkills || [],

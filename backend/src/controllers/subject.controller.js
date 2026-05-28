@@ -109,7 +109,7 @@ const getSubjects = async (req, res) => {
 
         const safeSubjects = subjects.map((subject) => ({
           ...subject,
-          score: 0,
+          score: null,
           matchedSkills: [],
           missingSkills: subject.requiredSkills || [],
           recommendationType: "UNKNOWN",
@@ -179,11 +179,12 @@ const getSubjectById = async (req, res) => {
 
         return res.status(200).json({
           ...subject,
-          score: savedScore.score || 0,
+          score: savedScore.score ?? null,
           matchedSkills: savedScore.matchedSkills || [],
           missingSkills: savedScore.missingSkills || [],
           recommendationType: savedScore.recommendationType,
           binomeId: savedScore.binomeId,
+          cvRequirement: savedScore.cvRequirement || null,
           facultyApplicationLock: await getStudentFacultyEligibility({
             userId: req.user.id,
             subjectId: subject.id,
@@ -194,7 +195,7 @@ const getSubjectById = async (req, res) => {
 
         return res.status(200).json({
           ...subject,
-          score: 0,
+          score: null,
           matchedSkills: [],
           missingSkills: subject.requiredSkills || [],
           recommendationType: "UNKNOWN",
@@ -249,10 +250,7 @@ const createSubject = async (req, res) => {
       description,
       technologies,
       requiredSkills,
-<<<<<<< HEAD
       languages,
-=======
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
       duration,
       places,
       educationField,
@@ -292,10 +290,7 @@ const createSubject = async (req, res) => {
         description,
         technologies: parseList(technologies, []),
         requiredSkills: parseList(requiredSkills, []),
-<<<<<<< HEAD
         languages: parseList(languages, []),
-=======
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
         duration: duration || "N/A",
         places: places !== undefined ? Number(places) : 1,
         department,
@@ -322,10 +317,7 @@ const createSubject = async (req, res) => {
         places: subject.places,
         technologies: subject.technologies,
         requiredSkills: subject.requiredSkills,
-<<<<<<< HEAD
         languages: subject.languages,
-=======
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
       },
     });
 
@@ -369,10 +361,7 @@ const updateSubject = async (req, res) => {
       description,
       technologies,
       requiredSkills,
-<<<<<<< HEAD
       languages,
-=======
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
       duration,
       places,
       archived,
@@ -409,10 +398,7 @@ const updateSubject = async (req, res) => {
         description: description ?? subject.description,
         technologies: parseList(technologies, subject.technologies || []),
         requiredSkills: parseList(requiredSkills, subject.requiredSkills || []),
-<<<<<<< HEAD
         languages: parseList(languages, subject.languages || []),
-=======
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
         duration: duration ?? subject.duration,
         places: places !== undefined ? Number(places) : subject.places,
         archived:

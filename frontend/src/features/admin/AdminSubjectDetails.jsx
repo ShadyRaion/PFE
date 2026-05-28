@@ -11,7 +11,6 @@ import {
   FileText,
   CheckCircle2,
   Clock,
-<<<<<<< HEAD
   History,
   Info,
   GraduationCap,
@@ -25,14 +24,6 @@ import {
   getAcademicYearLabel,
   getInternshipTypeLabel,
 } from "../../constants/profileFields";
-=======
-  ClipboardList,
-  History,
-  Info,
-} from "lucide-react";
-import api from "../../api/axios";
-import AdminStudentDetails from "./AdminStudentDetails";
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
 import {
   Card,
   CardHeader,
@@ -218,14 +209,11 @@ function AdminSubjectDetails() {
                 {new Date(subject.createdAt).toLocaleString()}
               </p>
               <p className="inline-flex items-center gap-1.5 text-slate-600">
-<<<<<<< HEAD
                 <Clock className="h-3.5 w-3.5 text-slate-400" strokeWidth={2.5} />
                 <span className="font-bold text-slate-900">Duration:</span>{" "}
                 {subject.duration || "N/A"}
               </p>
               <p className="inline-flex items-center gap-1.5 text-slate-600">
-=======
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
                 <RefreshCw className="h-3.5 w-3.5 text-slate-400" strokeWidth={2.5} />
                 <span className="font-bold text-slate-900">Modified:</span>{" "}
                 {new Date(subject.updatedAt).toLocaleString()}
@@ -235,7 +223,6 @@ function AdminSubjectDetails() {
                 <span className="font-bold text-slate-900">Archived:</span>{" "}
                 {subject.archived ? "Yes" : "No"}
               </p>
-<<<<<<< HEAD
               <p className="inline-flex items-center gap-1.5 text-slate-600">
                 <GraduationCap className="h-3.5 w-3.5 text-slate-400" strokeWidth={2.5} />
                 <span className="font-bold text-slate-900">Education field:</span>{" "}
@@ -268,8 +255,6 @@ function AdminSubjectDetails() {
                     : "All"}
                 </span>
               </p>
-=======
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
             </div>
           </CardBody>
         </Card>
@@ -323,7 +308,6 @@ function AdminSubjectDetails() {
             </div>
           </CardBody>
         </Card>
-<<<<<<< HEAD
 
         <Card>
           <CardHeader>
@@ -345,8 +329,6 @@ function AdminSubjectDetails() {
             </div>
           </CardBody>
         </Card>
-=======
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
       </section>
 
       <section className="grid gap-5 lg:grid-cols-2">
@@ -400,11 +382,7 @@ function AdminSubjectDetails() {
             {affectedApplications.map((application) => (
               <div
                 key={application.id}
-<<<<<<< HEAD
                 className="assignment-detail-card rounded-xl border border-emerald-200 bg-emerald-50 p-4"
-=======
-                className="rounded-xl border border-emerald-200 bg-emerald-50 p-4"
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
               >
                 <div className="flex flex-wrap items-center gap-2">
                   {getCandidates(application).map((candidate) => (

@@ -35,11 +35,8 @@ import {
   EmptyState,
   LoadingState,
 } from "../../components/ui";
-<<<<<<< HEAD
 import DateRangeFilter from "../../components/filters/DateRangeFilter";
 import { createDateRange, matchesDateRange } from "../../utils/filters";
-=======
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
 
 function SubjectDetailsModal({ subject, onClose, onOpenDocument }) {
   if (!subject) return null;
@@ -147,12 +144,7 @@ function SupervisorApplications() {
 
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("ALL");
-<<<<<<< HEAD
   const [dateFilter, setDateFilter] = useState(createDateRange("ALL"));
-=======
-  const [scoreFilter, setScoreFilter] = useState("ALL");
-  const [dateFilter, setDateFilter] = useState("ALL");
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
 
   const refreshAlerts = () => {
     window.dispatchEvent(new Event("page-alerts-refresh"));
@@ -296,36 +288,6 @@ function SupervisorApplications() {
     return new Date(value).toLocaleString();
   };
 
-<<<<<<< HEAD
-=======
-  const isInDateFilter = useCallback((date) => {
-    if (!date) return true;
-    if (dateFilter === "ALL") return true;
-    const createdAt = new Date(date);
-    const now = new Date();
-    if (dateFilter === "TODAY") {
-      return createdAt.toDateString() === now.toDateString();
-    }
-    if (dateFilter === "7_DAYS") {
-      return now - createdAt <= 7 * 24 * 60 * 60 * 1000;
-    }
-    if (dateFilter === "30_DAYS") {
-      return now - createdAt <= 30 * 24 * 60 * 60 * 1000;
-    }
-    return true;
-  }, [dateFilter]);
-
-  const isInScoreFilter = useCallback((score) => {
-    const value = Number(score || 0);
-    if (scoreFilter === "ALL") return true;
-    if (scoreFilter === "80") return value >= 80;
-    if (scoreFilter === "60") return value >= 60 && value < 80;
-    if (scoreFilter === "40") return value >= 40 && value < 60;
-    if (scoreFilter === "LOW") return value < 40;
-    return true;
-  }, [scoreFilter]);
-
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
   const skillMatches = (skill, application) => {
     const matchedSkills = (application?.matchedSkills || []).map((value) =>
       String(value).toLowerCase()
@@ -354,18 +316,10 @@ function SupervisorApplications() {
       const matchesSearch = text.includes(search.toLowerCase());
       const matchesStatus =
         statusFilter === "ALL" || application.status === statusFilter;
-<<<<<<< HEAD
       const matchesDate = matchesDateRange(application.createdAt, dateFilter);
       return matchesSearch && matchesStatus && matchesDate;
     });
   }, [applications, search, statusFilter, dateFilter]);
-=======
-      const matchesScore = isInScoreFilter(application.score);
-      const matchesDate = isInDateFilter(application.createdAt);
-      return matchesSearch && matchesStatus && matchesScore && matchesDate;
-    });
-  }, [applications, search, statusFilter, isInScoreFilter, isInDateFilter]);
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
 
   const openCV = async (cvId, fileName) => {
     try {
@@ -447,13 +401,8 @@ function SupervisorApplications() {
 
       <Card>
         <CardBody>
-<<<<<<< HEAD
           <div className="grid gap-3 lg:grid-cols-4">
             <Field label="Search" htmlFor="search" className="lg:col-span-2">
-=======
-          <div className="grid gap-3 lg:grid-cols-5">
-            <Field htmlFor="search" className="lg:col-span-2">
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
               <div className="relative">
                 <Search
                   className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"
@@ -468,11 +417,7 @@ function SupervisorApplications() {
                 />
               </div>
             </Field>
-<<<<<<< HEAD
             <Field label="Status" htmlFor="statusFilter">
-=======
-            <Field htmlFor="statusFilter">
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
               <Select
                 id="statusFilter"
                 value={statusFilter}
@@ -486,35 +431,7 @@ function SupervisorApplications() {
                 <option value="CANCELLED">Canceled</option>
               </Select>
             </Field>
-<<<<<<< HEAD
             <DateRangeFilter value={dateFilter} onChange={setDateFilter} />
-=======
-            <Field htmlFor="scoreFilter">
-              <Select
-                id="scoreFilter"
-                value={scoreFilter}
-                onChange={(e) => setScoreFilter(e.target.value)}
-              >
-                <option value="ALL">All scores</option>
-                <option value="80">80% and above</option>
-                <option value="60">60% to 79%</option>
-                <option value="40">40% to 59%</option>
-                <option value="LOW">Less than 40%</option>
-              </Select>
-            </Field>
-            <Field htmlFor="dateFilter">
-              <Select
-                id="dateFilter"
-                value={dateFilter}
-                onChange={(e) => setDateFilter(e.target.value)}
-              >
-                <option value="ALL">All dates</option>
-                <option value="TODAY">Today</option>
-                <option value="7_DAYS">Last 7 days</option>
-                <option value="30_DAYS">Last 30 days</option>
-              </Select>
-            </Field>
->>>>>>> 8fd258754427456a9e996d340332bcb6a728e256
           </div>
         </CardBody>
       </Card>
