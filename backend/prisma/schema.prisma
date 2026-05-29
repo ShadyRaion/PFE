@@ -86,6 +86,7 @@ model User {
   notifications Notification[]
   blacklists    Blacklist[]
   pageAlerts    PageAlert[]
+  academicReports AcademicReport[]
 
   student1Binomes  Binome[] @relation("Student1Binomes")
   student2Binomes  Binome[] @relation("Student2Binomes")
@@ -192,6 +193,7 @@ model CV {
 
 model AcademicReport {
   id           String   @id @default(uuid())
+  userId       String   @unique
   applicationId String? @unique
   originalName String
   fileName     String
@@ -202,6 +204,7 @@ model AcademicReport {
   submittedAt  DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   application Application? @relation(fields: [applicationId], references: [id], onDelete: Cascade)
 }
 
