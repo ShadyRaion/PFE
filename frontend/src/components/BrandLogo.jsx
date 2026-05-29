@@ -1,4 +1,5 @@
 import logo from "../assets/Logo_STB.png";
+import darkLogo from "../assets/Logo_STB_dark.png";
 
 const sizeClasses = {
   sm: "h-9",
@@ -8,11 +9,19 @@ const sizeClasses = {
 
 function BrandLogo({ size = "md", className = "" }) {
   return (
-    <img
-      src={logo}
-      alt="STB Bank"
-      className={`${sizeClasses[size] || sizeClasses.md} w-auto object-contain ${className}`}
-    />
+    <span className={`inline-flex items-center ${className}`}>
+      <img
+        src={logo}
+        alt="STB Bank"
+        className={`brand-logo-light ${sizeClasses[size] || sizeClasses.md} w-auto object-contain`}
+      />
+      <img
+        src={darkLogo}
+        alt=""
+        aria-hidden="true"
+        className={`brand-logo-dark hidden ${sizeClasses[size] || sizeClasses.md} w-auto object-contain`}
+      />
+    </span>
   );
 }
 

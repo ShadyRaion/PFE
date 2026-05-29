@@ -40,6 +40,14 @@ body {
   color: #e2e8f0;
 }
 
+:root[data-theme="dark"] .brand-logo-light {
+  display: none;
+}
+
+:root[data-theme="dark"] .brand-logo-dark {
+  display: block;
+}
+
 button,
 input,
 textarea,

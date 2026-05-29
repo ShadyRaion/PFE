@@ -28,7 +28,7 @@ const removeFile = (filePath) => {
   }
 };
 
-const completedAssignmentInclude = {
+const assignmentInclude = {
   subject: {
     include: {
       supervisor: {
@@ -63,8 +63,41 @@ const findCompletedAssignmentForStudent = async (userId) => {
         },
       ],
     },
-    include: completedAssignmentInclude,
+    include: assignmentInclude,
     orderBy: { completedAt: "desc" },
+  });
+};
+
+const findReportAssignmentForStudent = async (userId) => {
+  const studentFilter = {
+    OR: [
+      { studentId: userId },
+      {
+        binome: {
+          OR: [{ student1Id: userId }, { student2Id: userId }],
+        },
+      },
+    ],
+  };
+
+  const completed = await prisma.application.findFirst({
+    where: {
+      status: "COMPLETED",
+      ...studentFilter,
+    },
+    include: assignmentInclude,
+    orderBy: { completedAt: "desc" },
+  });
+
+  if (completed) return completed;
+
+  return prisma.application.findFirst({
+    where: {
+      status: "AFFECTED",
+      ...studentFilter,
+    },
+    include: assignmentInclude,
+    orderBy: { updatedAt: "desc" },
   });
 };
 
@@ -159,14 +192,19 @@ const uploadAcademicReport = async (req, res) => {
 
 const getMyAcademicReport = async (req, res) => {
   try {
-    const assignment = await findCompletedAssignmentForStudent(req.user.id);
+    const assignment = await findReportAssignmentForStudent(req.user.id);
 
     if (!assignment) {
-      return res.status(403).json({
+      return res.status(200).json({
+        report: null,
+        assignment: null,
+        canUpload: false,
         message:
-          "Your final report page will be available after your assignment is marked as completed.",
+          "You need an assignment before you can upload your final report.",
       });
     }
+
+    const canUpload = assignment.status === "COMPLETED";
 
     if (assignment.academicReport) {
       const { user, ...rest } = assignment.academicReport;
@@ -177,13 +215,17 @@ const getMyAcademicReport = async (req, res) => {
           owner: user || null,
         },
         assignment: sanitizeAssignment(assignment),
+        canUpload,
       });
     }
 
     return res.status(200).json({
       report: null,
       assignment: sanitizeAssignment(assignment),
-      message: "No final report has been submitted yet.",
+      canUpload,
+      message: canUpload
+        ? "No final report has been submitted yet."
+        : "Complete your assignment before uploading your final report.",
     });
   } catch (error) {
     console.error("GET /academic-report/me error:", error);

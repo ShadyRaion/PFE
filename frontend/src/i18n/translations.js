@@ -329,12 +329,16 @@ export const translations = {
   "Application accepted.": "Candidature accept\u00e9e.",
   "Application rejected.": "Candidature refus\u00e9e.",
   "Application affected.": "Candidature affect\u00e9e.",
+  "Assignment marked as completed. The final report page is now accessible so you can upload your final report.":
+    "Affectation marqu\u00e9e comme termin\u00e9e. La page du rapport final est maintenant accessible afin que vous puissiez importer votre rapport final.",
   "Interview scheduled.": "Entretien planifi\u00e9.",
   "Interview saved.": "Entretien enregistr\u00e9.",
   "Schedule interview": "Planifier l'entretien",
   "Accept after interview": "Accepter apr\u00e8s l'entretien",
   "Meet link": "Lien de r\u00e9union",
   "Cancel this application?": "Annuler cette candidature ?",
+  "After you mark it complete, the final report page will be accessible so you can upload your final report.":
+    "Apr\u00e8s l'avoir marqu\u00e9e comme termin\u00e9e, la page du rapport final sera accessible afin que vous puissiez importer votre rapport final.",
 
   "Unable to load interns.": "Impossible de charger les stagiaires.",
   "No assigned intern.": "Aucun stagiaire affect\u00e9.",

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { User, Mail, Phone, GraduationCap, Save, CheckCircle2, AlertCircle, Briefcase, Lock, Calendar } from "lucide-react";
+import { User, Mail, Phone, GraduationCap, Save, CheckCircle2, AlertCircle, Lock, Calendar } from "lucide-react";
 import api from "../../api/axios";
 import { PageHeader, Card, CardBody, Button, Field, Input, Select } from "../../components/ui";
 import { tunisianUniversities } from "../../data/tunisianUniversities";
@@ -289,28 +289,6 @@ function MonProfile() {
                       <option key={university} value={university} />
                     ))}
                   </datalist>
-                </div>
-              </Field>
-            )}
-
-            {!isSupervisor && (
-              <Field
-                label="Specialty"
-                htmlFor="specialty"
-                className="md:col-span-2"
-              >
-                <div className="relative">
-                  <Briefcase
-                    className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"
-                    strokeWidth={2.5}
-                  />
-                  <Input
-                    id="specialty"
-                    value={profile.specialty}
-                    onChange={update("specialty")}
-                    placeholder="Your specialty"
-                    className="pl-9"
-                  />
                 </div>
               </Field>
             )}

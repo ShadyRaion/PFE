@@ -34,7 +34,7 @@ const formatSize = (bytes) => {
 function AcademicReport() {
   const [report, setReport] = useState(null);
   const [assignment, setAssignment] = useState(null);
-  const [available, setAvailable] = useState(true);
+  const [canUpload, setCanUpload] = useState(false);
   const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
@@ -48,20 +48,20 @@ function AcademicReport() {
       const res = await api.get("/academic-report/me");
       setReport(res.data.report || null);
       setAssignment(res.data.assignment || null);
-      setAvailable(true);
+      setCanUpload(Boolean(res.data.canUpload));
+      setMessage(res.data.message || "");
+      setIsError(Boolean(res.data.message) && !res.data.canUpload);
     } catch (error) {
-      if (error.response?.status === 403) {
-        setAvailable(false);
-        setMessage(
-          error.response?.data?.message ||
-            "Your final report page will be available after your assignment is marked as completed."
-        );
-        setIsError(true);
-      } else if (error.response?.status !== 404) {
+      if (error.response?.status !== 404) {
         console.error(error);
       }
       setReport(null);
       setAssignment(null);
+      setCanUpload(false);
+      setMessage(
+        error.response?.data?.message || "Unable to load academic report."
+      );
+      setIsError(true);
     } finally {
       setLoading(false);
     }
@@ -83,6 +83,14 @@ function AcademicReport() {
   };
 
   const upload = async () => {
+    if (!canUpload) {
+      showMessage(
+        "Complete your assignment before uploading your final report.",
+        true
+      );
+      return;
+    }
+
     if (!file) {
       showMessage("Final report file is required.", true);
       return;
@@ -164,17 +172,6 @@ function AcademicReport() {
         subtitle="Upload your mémoire final after completing your assignment."
       />
 
-      {!loading && !available && (
-        <EmptyState
-          icon={GraduationCap}
-          title="Final report not available yet"
-          description="This page appears after your assignment is marked as completed."
-        />
-      )}
-
-      {available && (
-        <>
-
       <Card>
         <CardBody>
           <div className="flex items-start gap-3">
@@ -186,15 +183,22 @@ function AcademicReport() {
               <ul className="mt-2 list-disc space-y-1 pl-5">
                 <li>Accepted formats: PDF, DOC, DOCX</li>
                 <li>Maximum file size: 10 MB</li>
-                <li>This document is linked to your completed assignment.</li>
+                <li>The upload unlocks after your assignment is completed.</li>
                 <li>
                   Uploading again will replace your previous final report.
                 </li>
               </ul>
               {assignment?.subject?.title && (
-                <p className="mt-3 font-semibold text-slate-700">
-                  Assignment: {assignment.subject.title}
-                </p>
+                <div className="mt-3 flex flex-wrap items-center gap-2">
+                  <p className="font-semibold text-slate-700">
+                    Assignment: {assignment.subject.title}
+                  </p>
+                  <Badge variant={canUpload ? "success" : "warning"}>
+                    {assignment.status === "COMPLETED"
+                      ? "Completed"
+                      : "Not completed yet"}
+                  </Badge>
+                </div>
               )}
             </div>
           </div>
@@ -242,11 +246,25 @@ function AcademicReport() {
 
               {!(report && report.ownedByMe === false) && (
                 <>
+                  {!canUpload && (
+                    <div className="mt-4 flex items-start gap-2 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-semibold text-amber-800">
+                      <AlertCircle
+                        className="mt-0.5 h-4 w-4 shrink-0"
+                        strokeWidth={2.5}
+                      />
+                      <span>
+                        Your assignment has to be completed before you can
+                        upload the final report.
+                      </span>
+                    </div>
+                  )}
+
                   <input
                     id="academic-report-input"
                     type="file"
                     accept={ACCEPT}
                     onChange={onFileChange}
+                    disabled={!canUpload}
                     className="mt-4 block w-full rounded-xl border border-[#cfe1e8] bg-white px-4 py-2.5 text-sm file:mr-3 file:rounded-lg file:border-0 file:bg-cyan-700 file:px-3 file:py-1.5 file:text-xs file:font-bold file:text-white hover:file:bg-cyan-800"
                   />
 
@@ -260,7 +278,7 @@ function AcademicReport() {
                   <div className="mt-4">
                     <Button
                       onClick={upload}
-                      disabled={uploading || !file}
+                      disabled={!canUpload || uploading || !file}
                       iconLeft={uploading ? undefined : Upload}
                     >
                       {uploading
@@ -283,7 +301,11 @@ function AcademicReport() {
         <EmptyState
           icon={GraduationCap}
           title="No final report"
-          description="No final report has been submitted yet."
+          description={
+            canUpload
+              ? "No final report has been submitted yet."
+              : "Complete your assignment before uploading your final report."
+          }
         />
       )}
 
@@ -333,8 +355,6 @@ function AcademicReport() {
             </div>
           </CardBody>
         </Card>
-      )}
-        </>
       )}
     </div>
   );

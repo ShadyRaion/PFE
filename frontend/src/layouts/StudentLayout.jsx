@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import {
   LayoutDashboard,
   FileText,
@@ -12,9 +12,8 @@ import {
   User,
 } from "lucide-react";
 import SidebarLayout from "../components/layouts/SidebarLayout";
-import api from "../api/axios";
 
-const buildSections = (showFinalReport) => [
+const buildSections = () => [
   {
     label: "Home",
     items: [
@@ -25,9 +24,7 @@ const buildSections = (showFinalReport) => [
     label: "Journey",
     items: [
       { to: "/mon-cv", label: "My Resume", icon: FileText },
-      ...(showFinalReport
-        ? [{ to: "/academic-report", label: "Final report", icon: GraduationCap }]
-        : []),
+      { to: "/academic-report", label: "Final report", icon: GraduationCap },
       { to: "/binome", label: "Team", icon: Users, alertKey: "binome" },
       { to: "/subjects", label: "Catalog", icon: BookMarked },
       { to: "/recommendations", label: "Recommendations", icon: Sparkles },
@@ -65,31 +62,7 @@ const buildSections = (showFinalReport) => [
 ];
 
 export default function StudentLayout() {
-  const [showFinalReport, setShowFinalReport] = useState(false);
-
-  const checkCompletedAssignment = useCallback(async () => {
-    try {
-      const res = await api.get("/applications/me");
-      const applications = Array.isArray(res.data) ? res.data : res.data?.data || [];
-      setShowFinalReport(
-        applications.some((application) => application.status === "COMPLETED")
-      );
-    } catch {
-      setShowFinalReport(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    queueMicrotask(checkCompletedAssignment);
-    window.addEventListener("assignments-refresh", checkCompletedAssignment);
-    return () =>
-      window.removeEventListener("assignments-refresh", checkCompletedAssignment);
-  }, [checkCompletedAssignment]);
-
-  const sections = useMemo(
-    () => buildSections(showFinalReport),
-    [showFinalReport]
-  );
+  const sections = useMemo(() => buildSections(), []);
 
   return (
     <SidebarLayout

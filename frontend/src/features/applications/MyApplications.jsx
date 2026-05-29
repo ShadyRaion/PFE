@@ -73,7 +73,9 @@ function MyApplications() {
   const completeAssignment = async (id) => {
     try {
       await api.patch(`/applications/${id}/complete`);
-      setMessage("Assignment marked as completed.");
+      setMessage(
+        "Assignment marked as completed. The final report page is now accessible so you can upload your final report."
+      );
       setConfirmingCompleteId(null);
       fetchApplications();
       refreshAlerts();
@@ -400,7 +402,7 @@ function MyApplications() {
                     Mark assignment as completed?
                   </h3>
                   <p className="mt-1 text-sm text-slate-600">
-                    The final report page will become available after completion.
+                    After you mark it complete, the final report page will be accessible so you can upload your final report.
                   </p>
                 </div>
               </div>

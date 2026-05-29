@@ -11,6 +11,7 @@ import {
   Send,
   Info,
   Clock,
+  Lock,
 } from "lucide-react";
 import api from "../../api/axios";
 import useSessionUser from "../../hooks/useSessionUser";
@@ -37,6 +38,7 @@ function SubjectDetails() {
   const [hasBinome, setHasBinome] = useState(false);
   const [loading, setLoading] = useState(true);
   const [applying, setApplying] = useState(false);
+  const [successOpen, setSuccessOpen] = useState(false);
 
   const normalizeSkill = (value) =>
     String(value || "")
@@ -115,6 +117,7 @@ function SubjectDetails() {
   };
 
   const activeApplicationStatuses = ["PENDING", "APPROVED", "AFFECTED"];
+  const MIN_APPLICATION_SCORE = 60;
 
   const applicationOnThisSubject = applications.find(
     (app) => app.subjectId === id
@@ -133,6 +136,11 @@ function SubjectDetails() {
     ["AFFECTED", "APPROVED"].includes(app.status)
   );
 
+  const activeApplicationOnAnotherSubject = applications.find(
+    (app) =>
+      app.subjectId !== id && activeApplicationStatuses.includes(app.status)
+  );
+
   const facultyApplicationLock = subject?.facultyApplicationLock;
   const isLockedByFaculty = Boolean(facultyApplicationLock?.isLocked);
 
@@ -149,6 +157,9 @@ function SubjectDetails() {
       }).`;
     }
     if (alreadyApplied) return "You have already applied to this subject.";
+    if (activeApplicationOnAnotherSubject) {
+      return "You already applied for another subject. Only one active application is allowed.";
+    }
     if (affectedApplication) return "You are already assigned to a subject.";
     if (isLockedByFaculty) {
       return (
@@ -156,25 +167,38 @@ function SubjectDetails() {
         "You cannot apply because someone from your faculty is already working on this subject."
       );
     }
+    if (subject?.cvRequirement && !subject.cvRequirement.ready) {
+      return subject.cvRequirement.message;
+    }
+    if (
+      subject?.score !== null &&
+      subject?.score !== undefined &&
+      Number(subject.score || 0) < MIN_APPLICATION_SCORE
+    ) {
+      return `Your score is ${Number(subject.score || 0)}%. You need at least ${MIN_APPLICATION_SCORE}% to apply to this subject.`;
+    }
     return "";
   })();
 
   const applyToSubject = async () => {
     if (cannotApplyReason) {
-      setMessage(cannotApplyReason);
       return;
     }
     try {
       setApplying(true);
       setMessage("");
       await api.post("/applications", { subjectId: id });
-      setMessage("Application sent.");
-      await fetchData();
+      setSuccessOpen(true);
     } catch (error) {
       setMessage(error.response?.data?.message || "Error while applying.");
     } finally {
       setApplying(false);
     }
+  };
+
+  const closeSuccessModal = async () => {
+    setSuccessOpen(false);
+    await fetchData();
   };
 
   if (loading) {
@@ -205,10 +229,18 @@ function SubjectDetails() {
     ? "Sending..."
     : alreadyApplied
     ? "Already applied"
+    : activeApplicationOnAnotherSubject
+    ? "Already applied"
     : affectedApplication
     ? "Already assigned"
     : isLockedByFaculty
     ? "Locked by faculty"
+    : subject?.cvRequirement && !subject.cvRequirement.ready
+    ? "CV required"
+    : subject?.score !== null &&
+      subject?.score !== undefined &&
+      Number(subject.score || 0) < MIN_APPLICATION_SCORE
+    ? "Score too low"
     : canReapply
     ? "Apply again"
     : hasBinome
@@ -396,15 +428,26 @@ function SubjectDetails() {
             </CardBody>
           </Card>
 
-          <Button
-            onClick={applyToSubject}
-            disabled={applying || Boolean(cannotApplyReason)}
-            fullWidth
-            size="lg"
-            iconRight={applying ? undefined : Send}
-          >
-            {buttonLabel}
-          </Button>
+          <div className="relative">
+            <Button
+              onClick={applyToSubject}
+              disabled={applying || Boolean(cannotApplyReason)}
+              fullWidth
+              size="lg"
+              iconRight={applying ? undefined : Send}
+              className={cannotApplyReason ? "opacity-80" : ""}
+            >
+              {buttonLabel}
+            </Button>
+            {cannotApplyReason && (
+              <div
+                className="absolute inset-0 z-10 flex cursor-not-allowed items-center justify-center rounded-lg bg-white/35"
+                aria-hidden="true"
+              >
+                <Lock className="h-4 w-4 text-slate-600" strokeWidth={2.5} />
+              </div>
+            )}
+          </div>
 
           {cannotApplyReason && (
             <div className="flex items-start gap-2 rounded-xl border border-amber-200 bg-amber-50 px-3.5 py-2.5 text-sm font-semibold text-amber-900">
@@ -421,6 +464,38 @@ function SubjectDetails() {
           )}
         </aside>
       </div>
+
+      {successOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/40 px-4"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="application-success-title"
+        >
+          <div className="w-full max-w-md rounded-xl border border-cyan-100 bg-white p-6 text-center shadow-card">
+            <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600">
+              <CheckCircle2 className="h-6 w-6" strokeWidth={2.5} />
+            </span>
+            <h2
+              id="application-success-title"
+              className="mt-4 text-lg font-black text-slate-950"
+            >
+              Application submitted
+            </h2>
+            <p className="mt-2 text-sm font-semibold leading-6 text-slate-600">
+              Your application has been submitted.
+            </p>
+            <Button
+              onClick={closeSuccessModal}
+              className="mt-5"
+              fullWidth
+              size="lg"
+            >
+              OK
+            </Button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
