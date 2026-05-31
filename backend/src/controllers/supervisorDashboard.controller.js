@@ -13,6 +13,10 @@ const {
   getCandidateIds,
   autoRejectSameFacultyApplications,
 } = require("../services/facultySubject.service");
+const {
+  getApplicationPlacesUsed,
+  getSubjectAssignedPlacesById,
+} = require("../services/subjectPlaces.service");
 
 const ensureApprovedSupervisor = (req, res) => {
   if (req.user.role !== "COMPANY_SUPERVISOR") {
@@ -374,8 +378,19 @@ const approveApplication = async (req, res) => {
     }
 
     const acceptedFaculties = getCandidateFaculties(application);
+    const requestedPlaces = getApplicationPlacesUsed(application);
 
     const result = await prisma.$transaction(async (tx) => {
+      const assignedPlaces = await getSubjectAssignedPlacesById({
+        client: tx,
+        subjectId: application.subjectId,
+      });
+      const totalPlaces = Number(application.subject.places || 0);
+
+      if (assignedPlaces + requestedPlaces > totalPlaces) {
+        throw new Error("NO_REMAINING_PLACES");
+      }
+
       const affected = await tx.application.update({
         where: { id },
         data: {
@@ -509,6 +524,12 @@ const approveApplication = async (req, res) => {
       conversation: result.conversation,
     });
   } catch (error) {
+    if (error.message === "NO_REMAINING_PLACES") {
+      return res.status(400).json({
+        message: "This subject has no remaining places.",
+      });
+    }
+
     console.error(error);
     res.status(500).json({
       message: "Failed to approve application",

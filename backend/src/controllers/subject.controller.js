@@ -15,6 +15,11 @@ const {
 } = require("../services/recommendation.service");
 const { getStudentFacultyEligibility } = require("../services/facultySubject.service");
 const {
+  getSubjectAssignedPlaces,
+  withSubjectPlaces,
+  withSubjectPlacesList,
+} = require("../services/subjectPlaces.service");
+const {
   buildEligibilityWhere,
   checkSubjectEligibility,
   isStudentProfileComplete,
@@ -39,6 +44,27 @@ const parseList = (value, fallback = []) => {
   }
 
   return fallback;
+};
+
+const parsePlaces = (value) => {
+  const places = Number(value);
+
+  if (!Number.isInteger(places) || places < 1) {
+    return null;
+  }
+
+  return places;
+};
+
+const applicationInclude = {
+  include: {
+    binome: {
+      select: {
+        student1Id: true,
+        student2Id: true,
+      },
+    },
+  },
 };
 
 const recalculateSubjectScoresLater = (subjectId, context) => {
@@ -79,7 +105,7 @@ const getSubjects = async (req, res) => {
             createdAt: "desc",
           },
         },
-        applications: true,
+        applications: applicationInclude,
       },
       orderBy: {
         createdAt: "desc",
@@ -95,7 +121,7 @@ const getSubjects = async (req, res) => {
 
         const subjectsWithEligibility = await Promise.all(
           scoredSubjects.map(async (subject) => ({
-            ...subject,
+            ...withSubjectPlaces(subject),
             facultyApplicationLock: await getStudentFacultyEligibility({
               userId: req.user.id,
               subjectId: subject.id,
@@ -108,7 +134,7 @@ const getSubjects = async (req, res) => {
         console.error("Subject scoring error:", scoreError);
 
         const safeSubjects = subjects.map((subject) => ({
-          ...subject,
+          ...withSubjectPlaces(subject),
           score: null,
           matchedSkills: [],
           missingSkills: subject.requiredSkills || [],
@@ -120,7 +146,7 @@ const getSubjects = async (req, res) => {
       }
     }
 
-    return res.status(200).json(subjects);
+    return res.status(200).json(withSubjectPlacesList(subjects));
   } catch (error) {
     console.error("GET /subjects error:", error);
 
@@ -151,7 +177,7 @@ const getSubjectById = async (req, res) => {
             createdAt: "desc",
           },
         },
-        applications: true,
+        applications: applicationInclude,
       },
     });
 
@@ -178,7 +204,7 @@ const getSubjectById = async (req, res) => {
         });
 
         return res.status(200).json({
-          ...subject,
+          ...withSubjectPlaces(subject),
           score: savedScore.score ?? null,
           matchedSkills: savedScore.matchedSkills || [],
           missingSkills: savedScore.missingSkills || [],
@@ -194,7 +220,7 @@ const getSubjectById = async (req, res) => {
         console.error("Subject detail scoring error:", scoreError);
 
         return res.status(200).json({
-          ...subject,
+          ...withSubjectPlaces(subject),
           score: null,
           matchedSkills: [],
           missingSkills: subject.requiredSkills || [],
@@ -204,7 +230,7 @@ const getSubjectById = async (req, res) => {
       }
     }
 
-    return res.status(200).json(subject);
+    return res.status(200).json(withSubjectPlaces(subject));
   } catch (error) {
     console.error("GET /subjects/:id error:", error);
 
@@ -226,14 +252,14 @@ const getMySubjects = async (req, res) => {
             createdAt: "desc",
           },
         },
-        applications: true,
+        applications: applicationInclude,
       },
       orderBy: {
         createdAt: "desc",
       },
     });
 
-    return res.status(200).json(subjects);
+    return res.status(200).json(withSubjectPlacesList(subjects));
   } catch (error) {
     console.error("GET /subjects/mine error:", error);
 
@@ -265,6 +291,13 @@ const createSubject = async (req, res) => {
       });
     }
 
+    const parsedPlaces = parsePlaces(places);
+    if (parsedPlaces === null) {
+      return res.status(400).json({
+        message: "Please enter a valid number of places.",
+      });
+    }
+
     if (!isEducationField(educationField)) {
       return res.status(400).json({
         message: "Please choose an education field for this subject.",
@@ -292,7 +325,7 @@ const createSubject = async (req, res) => {
         requiredSkills: parseList(requiredSkills, []),
         languages: parseList(languages, []),
         duration: duration || "N/A",
-        places: places !== undefined ? Number(places) : 1,
+        places: parsedPlaces,
         department,
         educationField,
         supervisorId: req.user.id,
@@ -323,7 +356,7 @@ const createSubject = async (req, res) => {
 
     return res.status(201).json({
       message: "Sujet créé.",
-      subject,
+      subject: withSubjectPlaces(subject),
     });
   } catch (error) {
     console.error("POST /subjects error:", error);
@@ -341,6 +374,9 @@ const updateSubject = async (req, res) => {
     const subject = await prisma.subject.findUnique({
       where: {
         id,
+      },
+      include: {
+        applications: applicationInclude,
       },
     });
 
@@ -389,6 +425,25 @@ const updateSubject = async (req, res) => {
       return res.status(400).json({ message: eligibility.errors[0] });
     }
 
+    let nextPlaces = subject.places;
+    if (places !== undefined) {
+      const parsedPlaces = parsePlaces(places);
+      if (parsedPlaces === null) {
+        return res.status(400).json({
+          message: "Please enter a valid number of places.",
+        });
+      }
+
+      const assignedPlaces = getSubjectAssignedPlaces(subject);
+      if (parsedPlaces < assignedPlaces) {
+        return res.status(400).json({
+          message: `This subject already has ${assignedPlaces} assigned place(s).`,
+        });
+      }
+
+      nextPlaces = parsedPlaces;
+    }
+
     const updatedSubject = await prisma.subject.update({
       where: {
         id,
@@ -400,7 +455,7 @@ const updateSubject = async (req, res) => {
         requiredSkills: parseList(requiredSkills, subject.requiredSkills || []),
         languages: parseList(languages, subject.languages || []),
         duration: duration ?? subject.duration,
-        places: places !== undefined ? Number(places) : subject.places,
+        places: nextPlaces,
         archived:
           archived !== undefined
             ? archived === true || archived === "true"
@@ -421,6 +476,7 @@ const updateSubject = async (req, res) => {
       },
       include: {
         documents: true,
+        applications: applicationInclude,
       },
     });
 
@@ -441,7 +497,7 @@ const updateSubject = async (req, res) => {
 
     return res.status(200).json({
       message: "Sujet modifié.",
-      subject: updatedSubject,
+      subject: withSubjectPlaces(updatedSubject),
     });
   } catch (error) {
     console.error("PATCH /subjects/:id error:", error);

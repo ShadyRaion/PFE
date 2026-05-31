@@ -11,6 +11,7 @@ import {
   Archive,
   Clock,
   ArrowRight,
+  Users,
 } from "lucide-react";
 import api from "../../api/axios";
 import ExportButton from "../../components/ExportButton";
@@ -32,6 +33,7 @@ import {
   matchesDateRange,
   matchesDurationFilter,
 } from "../../utils/filters";
+import { formatManagerPlaces } from "../../utils/subjectPlaces";
 
 function AdminSubjects() {
   const [subjects, setSubjects] = useState([]);
@@ -57,7 +59,21 @@ function AdminSubjects() {
   }, [fetchSubjects]);
 
   const countAssignments = (subject) =>
-    (subject.applications || []).filter((a) => a.status === "AFFECTED").length;
+    Number(subject.assignedPlaces) ||
+    (subject.applications || [])
+      .filter((a) => a.status === "AFFECTED")
+      .reduce(
+        (total, application) =>
+          total +
+          (application.student
+            ? 1
+            : application.binome?.student1 && application.binome?.student2
+            ? 2
+            : application.binomeId
+            ? 2
+            : 0),
+        0
+      );
 
   const countApplications = (subject) => (subject.applications || []).length;
 
@@ -223,12 +239,22 @@ function AdminSubjects() {
                       <Calendar className="h-3.5 w-3.5 text-slate-400" strokeWidth={2.5} />
                       {new Date(subject.createdAt).toLocaleDateString()}
                     </span>
-                    <span className="inline-flex items-center gap-1.5">
-                      <User className="h-3.5 w-3.5 text-slate-400" strokeWidth={2.5} />
-                      <span className="font-bold text-slate-900">
+                    {subject.supervisor?.id ? (
+                      <Link
+                        to={`/admin/users/${subject.supervisor.id}`}
+                        className="inline-flex items-center gap-1.5 font-bold text-cyan-700 hover:underline"
+                      >
+                        <User className="h-3.5 w-3.5 text-slate-400" strokeWidth={2.5} />
                         {subject.supervisor?.fullName || "-"}
+                      </Link>
+                    ) : (
+                      <span className="inline-flex items-center gap-1.5">
+                        <User className="h-3.5 w-3.5 text-slate-400" strokeWidth={2.5} />
+                        <span className="font-bold text-slate-900">
+                          {subject.supervisor?.fullName || "-"}
+                        </span>
                       </span>
-                    </span>
+                    )}
                     <span className="inline-flex items-center gap-1.5">
                       <Clock className="h-3.5 w-3.5 text-slate-400" strokeWidth={2.5} />
                       {subject.duration || "N/A"}
@@ -253,6 +279,9 @@ function AdminSubjects() {
                 <div className="flex shrink-0 flex-row gap-2 lg:flex-col lg:items-end">
                   <Badge variant="success" size="sm" icon={CheckCircle2}>
                     {countAssignments(subject)} assigned
+                  </Badge>
+                  <Badge variant="info" size="sm" icon={Users}>
+                    {formatManagerPlaces(subject)}
                   </Badge>
                   <Badge variant="neutral" size="sm" icon={ClipboardList}>
                     {countApplications(subject)} application(s)

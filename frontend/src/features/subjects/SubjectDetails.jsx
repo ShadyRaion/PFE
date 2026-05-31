@@ -12,6 +12,7 @@ import {
   Info,
   Clock,
   Lock,
+  Users,
 } from "lucide-react";
 import api from "../../api/axios";
 import useSessionUser from "../../hooks/useSessionUser";
@@ -25,6 +26,11 @@ import {
   Button,
   LoadingState,
 } from "../../components/ui";
+import {
+  formatManagerPlaces,
+  formatStudentPlaces,
+  getRemainingPlaces,
+} from "../../utils/subjectPlaces";
 
 function SubjectDetails() {
   const { id } = useParams();
@@ -143,6 +149,7 @@ function SubjectDetails() {
 
   const facultyApplicationLock = subject?.facultyApplicationLock;
   const isLockedByFaculty = Boolean(facultyApplicationLock?.isLocked);
+  const isSubjectFull = isStudent && getRemainingPlaces(subject) < 1;
 
   const fieldMismatch =
     isStudent &&
@@ -155,6 +162,9 @@ function SubjectDetails() {
       return `You can only apply to subjects in your education field (${
         getEducationFieldLabel(user?.educationField) || "your field"
       }).`;
+    }
+    if (isSubjectFull) {
+      return "No more places available for this subject.";
     }
     if (alreadyApplied) return "You have already applied to this subject.";
     if (activeApplicationOnAnotherSubject) {
@@ -235,6 +245,8 @@ function SubjectDetails() {
     ? "Already assigned"
     : isLockedByFaculty
     ? "Locked by faculty"
+    : isSubjectFull
+    ? "Places full"
     : subject?.cvRequirement && !subject.cvRequirement.ready
     ? "CV required"
     : subject?.score !== null &&
@@ -284,6 +296,14 @@ function SubjectDetails() {
                   Duration{" "}
                   <span className="font-bold text-slate-900">
                     {subject.duration || "N/A"}
+                  </span>
+                </span>
+                <span className="inline-flex items-center gap-1.5">
+                  <Users className="h-4 w-4" strokeWidth={2.5} />
+                  <span className="font-bold text-slate-900">
+                    {isStudent
+                      ? formatStudentPlaces(subject)
+                      : formatManagerPlaces(subject)}
                   </span>
                 </span>
               </div>
@@ -435,13 +455,13 @@ function SubjectDetails() {
               fullWidth
               size="lg"
               iconRight={applying ? undefined : Send}
-              className={cannotApplyReason ? "opacity-80" : ""}
+              className={cannotApplyReason ? "cursor-not-allowed opacity-60" : ""}
             >
               {buttonLabel}
             </Button>
             {cannotApplyReason && (
               <div
-                className="absolute inset-0 z-10 flex cursor-not-allowed items-center justify-center rounded-lg bg-white/35"
+                className="absolute inset-0 z-10 flex cursor-not-allowed items-center justify-center rounded-lg bg-slate-100/70"
                 aria-hidden="true"
               >
                 <Lock className="h-4 w-4 text-slate-600" strokeWidth={2.5} />

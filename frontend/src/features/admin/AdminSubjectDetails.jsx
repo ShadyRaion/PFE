@@ -16,6 +16,7 @@ import {
   GraduationCap,
   Briefcase,
   Languages,
+  Users,
 } from "lucide-react";
 import api from "../../api/axios";
 import AdminStudentDetails from "./AdminStudentDetails";
@@ -31,6 +32,7 @@ import {
   Badge,
   LoadingState,
 } from "../../components/ui";
+import { formatManagerPlaces } from "../../utils/subjectPlaces";
 
 function statusVariant(status) {
   switch (status) {
@@ -212,6 +214,11 @@ function AdminSubjectDetails() {
                 <Clock className="h-3.5 w-3.5 text-slate-400" strokeWidth={2.5} />
                 <span className="font-bold text-slate-900">Duration:</span>{" "}
                 {subject.duration || "N/A"}
+              </p>
+              <p className="inline-flex items-center gap-1.5 text-slate-600">
+                <Users className="h-3.5 w-3.5 text-slate-400" strokeWidth={2.5} />
+                <span className="font-bold text-slate-900">Places:</span>{" "}
+                {formatManagerPlaces(subject)}
               </p>
               <p className="inline-flex items-center gap-1.5 text-slate-600">
                 <RefreshCw className="h-3.5 w-3.5 text-slate-400" strokeWidth={2.5} />

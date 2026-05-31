@@ -18,6 +18,7 @@ const {
   uniqueFaculties,
   findAffectedApplicationForFaculties,
 } = require("../services/facultySubject.service");
+const { getSubjectAssignedPlaces } = require("../services/subjectPlaces.service");
 const { checkSubjectEligibility } = require("../utils/subjectEligibility");
 
 const MIN_APPLICATION_SCORE = 60;
@@ -283,6 +284,16 @@ const createApplication = async (req, res) => {
       },
       include: {
         supervisor: true,
+        applications: {
+          include: {
+            binome: {
+              select: {
+                student1Id: true,
+                student2Id: true,
+              },
+            },
+          },
+        },
       },
     });
 
@@ -433,6 +444,13 @@ const createApplication = async (req, res) => {
         message:
           "You already have an active application for another subject. Only one active application is allowed.",
         code: "ACTIVE_APPLICATION_EXISTS",
+      });
+    }
+
+    if (getSubjectAssignedPlaces(subject) >= Number(subject.places || 0)) {
+      return res.status(400).json({
+        message: "This subject has no remaining places.",
+        code: "NO_REMAINING_PLACES",
       });
     }
 

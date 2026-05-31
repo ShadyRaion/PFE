@@ -3,6 +3,7 @@ const prisma = require("../config/prisma");
 const {
   attachSavedScoresToSubjectsForStudent,
 } = require("../services/recommendation.service");
+const { withSubjectPlacesList } = require("../services/subjectPlaces.service");
 const { normalizeDepartment } = require("../utils/department");
 const {
   buildEligibilityWhere,
@@ -37,7 +38,16 @@ const getRecommendations = async (req, res) => {
             createdAt: "desc",
           },
         },
-        applications: true,
+        applications: {
+          include: {
+            binome: {
+              select: {
+                student1Id: true,
+                student2Id: true,
+              },
+            },
+          },
+        },
       },
       orderBy: {
         createdAt: "desc",
@@ -49,7 +59,7 @@ const getRecommendations = async (req, res) => {
       subjects,
     });
 
-    const recommendations = scoredSubjects
+    const recommendations = withSubjectPlacesList(scoredSubjects)
       .filter((subject) => (subject.score || 0) >= MIN_RECOMMENDATION_SCORE)
       .sort((a, b) => {
         const scoreDiff = (b.score || 0) - (a.score || 0);

@@ -7,6 +7,10 @@ const {
   resolveActionAlert,
   resolveInfoAlerts,
 } = require("../services/pageAlert.service");
+const {
+  withSubjectPlaces,
+  withSubjectPlacesList,
+} = require("../services/subjectPlaces.service");
 
 const getAllUsers = async (req, res) => {
   try {
@@ -351,7 +355,7 @@ const getAdminSubjects = async (req, res) => {
       },
     });
 
-    return res.status(200).json(subjects);
+    return res.status(200).json(withSubjectPlacesList(subjects));
   } catch (error) {
     console.error("GET /admin/subjects error:", error);
 
@@ -397,7 +401,7 @@ const getAdminSubjectDetails = async (req, res) => {
       });
     }
 
-    return res.status(200).json(subject);
+    return res.status(200).json(withSubjectPlaces(subject));
   } catch (error) {
     console.error("GET /admin/subjects/:id error:", error);
 

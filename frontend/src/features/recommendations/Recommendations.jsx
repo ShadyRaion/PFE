@@ -8,6 +8,7 @@ import {
   Languages,
   Info,
   Clock,
+  Users,
 } from "lucide-react";
 import api from "../../api/axios";
 import {
@@ -26,6 +27,7 @@ import {
   DURATION_FILTERS,
   matchesDurationFilter,
 } from "../../utils/filters";
+import { formatStudentPlaces } from "../../utils/subjectPlaces";
 
 function Recommendations() {
   const navigate = useNavigate();
@@ -196,6 +198,12 @@ function Recommendations() {
                         Duration:{" "}
                         <span className="font-bold text-slate-700">
                           {subject.duration || "N/A"}
+                        </span>
+                      </p>
+                      <p className="mt-1 flex items-center gap-1.5 text-sm text-slate-500">
+                        <Users className="h-3.5 w-3.5" strokeWidth={2.5} />
+                        <span className="font-bold text-slate-700">
+                          {formatStudentPlaces(subject)}
                         </span>
                       </p>
                     </div>

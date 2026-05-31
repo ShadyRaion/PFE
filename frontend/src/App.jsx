@@ -318,6 +318,8 @@ function App() {
               <CompletedAssignments
                 endpoint="/admin/completed-assignments"
                 subjectBasePath="/admin/subjects"
+                userBasePath="/admin/users"
+                supervisorBasePath="/admin/users"
               />
             }
           />

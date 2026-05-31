@@ -48,6 +48,7 @@ import {
   getAcademicYearLabel,
   getInternshipTypeLabel,
 } from "../../constants/profileFields";
+import { formatManagerPlaces } from "../../utils/subjectPlaces";
 
 function SubjectDetailsModal({ subject, onClose, onOpenDocument }) {
   if (!subject) return null;
@@ -68,6 +69,10 @@ function SubjectDetailsModal({ subject, onClose, onOpenDocument }) {
               <p className="mt-1 inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500">
                 <Clock className="h-3.5 w-3.5" strokeWidth={2.5} />
                 Duration: {subject.duration || "N/A"}
+              </p>
+              <p className="mt-1 inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500">
+                <Users className="h-3.5 w-3.5" strokeWidth={2.5} />
+                Places: {formatManagerPlaces(subject)}
               </p>
             </div>
             <Button variant="secondary" size="sm" iconLeft={X} onClick={onClose}>
@@ -247,6 +252,7 @@ function MySubjects() {
     title: "",
     description: "",
     duration: "",
+    places: "1",
     educationField: "",
     internshipType: "",
     allowedDegreeLevels: [],
@@ -337,6 +343,7 @@ function MySubjects() {
       title: subject.title || "",
       description: subject.description || "",
       duration: subject.duration || "",
+      places: String(subject.places || 1),
       educationField: subject.educationField || "",
       internshipType: subject.internshipType || "",
       allowedDegreeLevels: subject.allowedDegreeLevels || [],
@@ -384,6 +391,7 @@ function MySubjects() {
         title: editForm.title,
         description: editForm.description,
         duration: editForm.duration,
+        places: Number(editForm.places),
         educationField: editForm.educationField,
         internshipType: editForm.internshipType,
         allowedDegreeLevels: editForm.allowedDegreeLevels,
@@ -629,14 +637,20 @@ function MySubjects() {
                     )}
                   </div>
 
-                  <p className="mt-1 inline-flex items-center gap-1.5 text-xs text-slate-500">
-                    <Calendar className="h-3.5 w-3.5" strokeWidth={2.5} />
-                    Created on {new Date(subject.createdAt).toLocaleString()}
-                  </p>
-                  <p className="mt-1 inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500">
-                    <Clock className="h-3.5 w-3.5" strokeWidth={2.5} />
-                    Duration: {subject.duration || "N/A"}
-                  </p>
+                  <div className="mt-2 flex flex-wrap items-center gap-x-6 gap-y-2 text-xs text-slate-500">
+                    <span className="inline-flex items-center gap-1.5">
+                      <Calendar className="h-3.5 w-3.5" strokeWidth={2.5} />
+                      Created on {new Date(subject.createdAt).toLocaleString()}
+                    </span>
+                    <span className="inline-flex items-center gap-1.5 font-semibold">
+                      <Clock className="h-3.5 w-3.5" strokeWidth={2.5} />
+                      Duration: {subject.duration || "N/A"}
+                    </span>
+                    <span className="inline-flex items-center gap-1.5 font-semibold">
+                      <Users className="h-3.5 w-3.5" strokeWidth={2.5} />
+                      Places: {formatManagerPlaces(subject)}
+                    </span>
+                  </div>
                   <div className="mt-2 flex flex-wrap gap-1.5">
                     <Badge variant="info" size="sm" icon={Briefcase}>
                       {getInternshipTypeLabel(subject.internshipType) || "Internship N/A"}
@@ -816,6 +830,22 @@ function MySubjects() {
                       )
                     )}
                   </Select>
+                </Field>
+
+                <Field label="Places" htmlFor="editPlaces">
+                  <Input
+                    id="editPlaces"
+                    type="number"
+                    min="1"
+                    step="1"
+                    value={editForm.places}
+                    onChange={(e) =>
+                      setEditForm((prev) => ({
+                        ...prev,
+                        places: e.target.value,
+                      }))
+                    }
+                  />
                 </Field>
 
                 <Field

@@ -11,6 +11,7 @@ import {
   ArrowRight,
   GraduationCap,
   Clock,
+  Users,
 } from "lucide-react";
 import api from "../../api/axios";
 import useSessionUser from "../../hooks/useSessionUser";
@@ -35,6 +36,7 @@ import {
   DURATION_FILTERS,
   matchesDurationFilter,
 } from "../../utils/filters";
+import { formatStudentPlaces } from "../../utils/subjectPlaces";
 
 function CatalogSubjects() {
   const navigate = useNavigate();
@@ -286,6 +288,10 @@ function CatalogSubjects() {
                     <p className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500">
                       <Clock className="h-3.5 w-3.5" strokeWidth={2.5} />
                       {subject.duration || "N/A"}
+                    </p>
+                    <p className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500">
+                      <Users className="h-3.5 w-3.5" strokeWidth={2.5} />
+                      {formatStudentPlaces(subject)}
                     </p>
                     {subject.documents?.length > 0 && (
                       <span className="inline-flex items-center gap-1 text-xs font-semibold text-cyan-700">

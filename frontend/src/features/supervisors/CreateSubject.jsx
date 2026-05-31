@@ -32,6 +32,7 @@ function CreateSubject() {
     title: "",
     description: "",
     duration: "",
+    places: "",
     technologies: "",
     requiredSkills: "",
     languages: "",
@@ -97,6 +98,12 @@ function CreateSubject() {
       return;
     }
 
+    if (!Number.isInteger(Number(form.places)) || Number(form.places) < 1) {
+      setIsError(true);
+      setMessage("Please enter a valid number of places.");
+      return;
+    }
+
     try {
       setCreating(true);
       setMessage("");
@@ -106,6 +113,7 @@ function CreateSubject() {
         title: form.title,
         description: form.description,
         duration: form.duration,
+        places: Number(form.places),
         educationField: form.educationField,
         internshipType: form.internshipType,
         allowedDegreeLevels: form.allowedDegreeLevels,
@@ -133,6 +141,7 @@ function CreateSubject() {
         title: "",
         description: "",
         duration: "",
+        places: "",
         technologies: "",
         requiredSkills: "",
         languages: "",
@@ -218,6 +227,19 @@ function CreateSubject() {
                 <option value="6 months">6 months</option>
                 <option value="6+ months">6+ months</option>
               </Select>
+            </Field>
+
+            <Field label="Places" htmlFor="places" required>
+              <Input
+                id="places"
+                type="number"
+                min="1"
+                step="1"
+                value={form.places}
+                onChange={(e) => updateField("places", e.target.value)}
+                required
+                placeholder="Number of available places"
+              />
             </Field>
 
             <Field

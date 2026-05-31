@@ -50,8 +50,12 @@ function CompletedAssignments({
   title = "Completed assignments",
   subtitle = "Completed assignments and uploaded final reports.",
   subjectBasePath = "/admin/subjects",
+  userBasePath = "",
+  supervisorBasePath = "",
 }) {
   const [assignments, setAssignments] = useState([]);
+  const [selectedSubject, setSelectedSubject] = useState(null);
+  const [selectedIntern, setSelectedIntern] = useState(null);
   const [search, setSearch] = useState("");
   const [typeFilter, setTypeFilter] = useState("ALL");
   const [durationFilter, setDurationFilter] = useState("ALL");
@@ -167,6 +171,27 @@ function CompletedAssignments({
       setMessage("Unable to open the final report.");
     }
   };
+
+  const openDocument = async (document) => {
+    if (!document?.id) return;
+    try {
+      const res = await api.get(`/subject-documents/open/${document.id}`, {
+        responseType: "blob",
+      });
+      const contentType =
+        res.headers["content-type"] ||
+        document.fileType ||
+        "application/octet-stream";
+      const blob = new Blob([res.data], { type: contentType });
+      const fileURL = window.URL.createObjectURL(blob);
+      window.open(fileURL, "_blank");
+    } catch {
+      setMessage("Unable to open the subject document.");
+    }
+  };
+
+  const internButtonClass =
+    "inline-flex items-center gap-1.5 rounded-lg bg-cyan-50 px-3 py-1.5 text-sm font-bold text-cyan-700 transition hover:bg-cyan-100";
 
   if (loading) {
     return (
@@ -315,18 +340,32 @@ function CompletedAssignments({
                         {assignment.subject?.title || "Untitled subject"}
                       </Link>
                     ) : (
-                      <h2 className="text-xl font-black text-cyan-700">
+                      <button
+                        type="button"
+                        onClick={() => setSelectedSubject(assignment.subject)}
+                        className="text-left text-xl font-black text-cyan-700 hover:underline"
+                      >
                         {assignment.subject?.title || "Untitled subject"}
-                      </h2>
+                      </button>
                     )}
 
                     <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-slate-600">
-                      <span className="inline-flex items-center gap-1.5">
-                        <User className="h-3.5 w-3.5 text-slate-400" strokeWidth={2.5} />
-                        <span className="font-bold text-slate-900">
-                          {assignment.subject?.supervisor?.fullName || "-"}
+                      {supervisorBasePath && assignment.subject?.supervisor?.id ? (
+                        <Link
+                          to={`${supervisorBasePath}/${assignment.subject.supervisor.id}`}
+                          className="inline-flex items-center gap-1.5 font-bold text-cyan-700 hover:underline"
+                        >
+                          <User className="h-3.5 w-3.5 text-slate-400" strokeWidth={2.5} />
+                          {assignment.subject.supervisor.fullName || "-"}
+                        </Link>
+                      ) : (
+                        <span className="inline-flex items-center gap-1.5">
+                          <User className="h-3.5 w-3.5 text-slate-400" strokeWidth={2.5} />
+                          <span className="font-bold text-slate-900">
+                            {assignment.subject?.supervisor?.fullName || "-"}
+                          </span>
                         </span>
-                      </span>
+                      )}
                       <span className="inline-flex items-center gap-1.5">
                         <Calendar className="h-3.5 w-3.5 text-slate-400" strokeWidth={2.5} />
                         Completed{" "}
@@ -343,17 +382,62 @@ function CompletedAssignments({
                     <div className="mt-4 flex flex-wrap gap-2">
                       {isBinome ? (
                         <>
-                          <Badge variant="info" icon={Users}>
-                            {assignment.binome.student1.fullName}
-                          </Badge>
-                          <Badge variant="info" icon={Users}>
-                            {assignment.binome.student2.fullName}
-                          </Badge>
+                          {userBasePath ? (
+                            <Link
+                              to={`${userBasePath}/${assignment.binome.student1.id}`}
+                              className={internButtonClass}
+                            >
+                              <Users className="h-3.5 w-3.5" strokeWidth={2.5} />
+                              {assignment.binome.student1.fullName}
+                            </Link>
+                          ) : (
+                            <button
+                              type="button"
+                              onClick={() => setSelectedIntern(assignment.binome.student1)}
+                              className={internButtonClass}
+                            >
+                              <Users className="h-3.5 w-3.5" strokeWidth={2.5} />
+                              {assignment.binome.student1.fullName}
+                            </button>
+                          )}
+                          {userBasePath ? (
+                            <Link
+                              to={`${userBasePath}/${assignment.binome.student2.id}`}
+                              className={internButtonClass}
+                            >
+                              <Users className="h-3.5 w-3.5" strokeWidth={2.5} />
+                              {assignment.binome.student2.fullName}
+                            </Link>
+                          ) : (
+                            <button
+                              type="button"
+                              onClick={() => setSelectedIntern(assignment.binome.student2)}
+                              className={internButtonClass}
+                            >
+                              <Users className="h-3.5 w-3.5" strokeWidth={2.5} />
+                              {assignment.binome.student2.fullName}
+                            </button>
+                          )}
                         </>
                       ) : (
-                        <Badge variant="success" icon={User}>
-                          {assignment.student?.fullName || "-"}
-                        </Badge>
+                        userBasePath && assignment.student?.id ? (
+                          <Link
+                            to={`${userBasePath}/${assignment.student.id}`}
+                            className={internButtonClass}
+                          >
+                            <User className="h-3.5 w-3.5" strokeWidth={2.5} />
+                            {assignment.student?.fullName || "-"}
+                          </Link>
+                        ) : (
+                          <button
+                            type="button"
+                            onClick={() => setSelectedIntern(assignment.student)}
+                            className={internButtonClass}
+                          >
+                            <User className="h-3.5 w-3.5" strokeWidth={2.5} />
+                            {assignment.student?.fullName || "-"}
+                          </button>
+                        )
                       )}
                     </div>
 
@@ -407,6 +491,88 @@ function CompletedAssignments({
           />
         )}
       </section>
+
+      {selectedSubject && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-6">
+          <Card className="max-h-[90vh] w-full max-w-3xl overflow-y-auto">
+            <CardBody>
+              <div className="flex items-start justify-between gap-4">
+                <h2 className="text-2xl font-black text-slate-950">
+                  {selectedSubject.title || "Subject"}
+                </h2>
+                <Button variant="secondary" size="sm" onClick={() => setSelectedSubject(null)}>
+                  Close
+                </Button>
+              </div>
+              <p className="mt-4 whitespace-pre-line leading-7 text-slate-700">
+                {selectedSubject.description || "No description."}
+              </p>
+              <div className="mt-5 grid gap-3 sm:grid-cols-2">
+                <div className="rounded-xl border border-[#e2edf2] bg-slate-50 p-4">
+                  <p className="text-xs font-bold uppercase tracking-wider text-slate-500">Duration</p>
+                  <p className="mt-1.5 font-bold text-slate-950">{selectedSubject.duration || "N/A"}</p>
+                </div>
+                <div className="rounded-xl border border-[#e2edf2] bg-slate-50 p-4">
+                  <p className="text-xs font-bold uppercase tracking-wider text-slate-500">Supervisor</p>
+                  <p className="mt-1.5 font-bold text-slate-950">{selectedSubject.supervisor?.fullName || "-"}</p>
+                </div>
+              </div>
+              <div className="mt-5">
+                <p className="mb-2 text-xs font-bold uppercase tracking-wider text-slate-500">Documents</p>
+                <div className="space-y-2">
+                  {selectedSubject.documents?.map((document) => (
+                    <button
+                      key={document.id}
+                      onClick={() => openDocument(document)}
+                      className="flex w-full items-center gap-2 rounded-xl border border-[#cfe1e8] bg-slate-50 px-4 py-3 text-left text-sm font-semibold text-cyan-700 transition hover:bg-cyan-50"
+                    >
+                      <FileText className="h-4 w-4" strokeWidth={2.5} />
+                      {document.originalName || document.fileName || "Document"}
+                    </button>
+                  ))}
+                  {(!selectedSubject.documents || selectedSubject.documents.length === 0) && (
+                    <p className="text-sm text-slate-500">No document.</p>
+                  )}
+                </div>
+              </div>
+            </CardBody>
+          </Card>
+        </div>
+      )}
+
+      {selectedIntern && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-6">
+          <Card className="w-full max-w-2xl">
+            <CardBody>
+              <div className="flex items-start justify-between gap-4">
+                <h2 className="text-2xl font-black text-slate-950">
+                  {selectedIntern.fullName || "Intern"}
+                </h2>
+                <Button variant="secondary" size="sm" onClick={() => setSelectedIntern(null)}>
+                  Close
+                </Button>
+              </div>
+              <div className="mt-5 grid gap-3 sm:grid-cols-2">
+                {[
+                  ["Email", selectedIntern.email],
+                  ["University", selectedIntern.university],
+                  ["Specialty", selectedIntern.specialty],
+                  ["Phone", selectedIntern.phone],
+                  ["Degree level", selectedIntern.degreeLevel],
+                  ["Academic year", selectedIntern.academicYear],
+                  ["Internship type", selectedIntern.internshipType],
+                  ["Desired duration", selectedIntern.desiredDuration],
+                ].map(([label, value]) => (
+                  <div key={label} className="rounded-xl border border-[#e2edf2] bg-slate-50 p-4">
+                    <p className="text-xs font-bold uppercase tracking-wider text-slate-500">{label}</p>
+                    <p className="mt-1.5 font-bold text-slate-950">{value || "-"}</p>
+                  </div>
+                ))}
+              </div>
+            </CardBody>
+          </Card>
+        </div>
+      )}
     </div>
   );
 }

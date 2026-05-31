@@ -185,12 +185,22 @@ function AdminAffectations() {
                     </Link>
 
                     <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-slate-600">
-                      <span className="inline-flex items-center gap-1.5">
-                        <User className="h-3.5 w-3.5 text-slate-400" strokeWidth={2.5} />
-                        <span className="font-bold text-slate-900">
-                          {assignment.subject?.supervisor?.fullName || "-"}
+                      {assignment.subject?.supervisor?.id ? (
+                        <Link
+                          to={`/admin/users/${assignment.subject.supervisor.id}`}
+                          className="inline-flex items-center gap-1.5 font-bold text-cyan-700 hover:underline"
+                        >
+                          <User className="h-3.5 w-3.5 text-slate-400" strokeWidth={2.5} />
+                          {assignment.subject.supervisor.fullName || "-"}
+                        </Link>
+                      ) : (
+                        <span className="inline-flex items-center gap-1.5">
+                          <User className="h-3.5 w-3.5 text-slate-400" strokeWidth={2.5} />
+                          <span className="font-bold text-slate-900">
+                            {assignment.subject?.supervisor?.fullName || "-"}
+                          </span>
                         </span>
-                      </span>
+                      )}
                       <span className="inline-flex items-center gap-1.5">
                         <Calendar className="h-3.5 w-3.5 text-slate-400" strokeWidth={2.5} />
                         {new Date(assignment.updatedAt).toLocaleDateString()}
