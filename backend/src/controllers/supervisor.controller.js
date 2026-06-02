@@ -112,17 +112,6 @@ const getSupervisorInterns = async (req, res) => {
               },
               take: 1,
             },
-            academicReport: {
-              select: {
-                id: true,
-                originalName: true,
-                fileName: true,
-                fileType: true,
-                fileSize: true,
-                status: true,
-                submittedAt: true,
-              },
-            },
           },
         },
         binome: {
@@ -135,17 +124,6 @@ const getSupervisorInterns = async (req, res) => {
                   },
                   take: 1,
                 },
-                academicReport: {
-              select: {
-                id: true,
-                originalName: true,
-                fileName: true,
-                fileType: true,
-                fileSize: true,
-                status: true,
-                submittedAt: true,
-              },
-            },
               },
             },
             student2: {
@@ -156,17 +134,6 @@ const getSupervisorInterns = async (req, res) => {
                   },
                   take: 1,
                 },
-                academicReport: {
-              select: {
-                id: true,
-                originalName: true,
-                fileName: true,
-                fileType: true,
-                fileSize: true,
-                status: true,
-                submittedAt: true,
-              },
-            },
               },
             },
           },
@@ -185,6 +152,20 @@ const getSupervisorInterns = async (req, res) => {
                 email: true,
               },
             },
+          },
+        },
+        academicReport: {
+          select: {
+            id: true,
+            userId: true,
+            applicationId: true,
+            originalName: true,
+            fileName: true,
+            fileType: true,
+            fileSize: true,
+            status: true,
+            submittedAt: true,
+            updatedAt: true,
           },
         },
         conversation: true,
@@ -965,6 +946,7 @@ const cancelAffectation = async (req, res) => {
 
     const candidateIds = getCandidateUserIds(application);
     const reasonText = reason?.trim();
+    const result = { autoRejectedApplications: [] };
 
     for (const candidateId of candidateIds) {
       try {

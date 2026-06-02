@@ -64,6 +64,11 @@ function SupervisorRegister() {
       setMessage("Division is required.");
       return;
     }
+    if (formData.password.length < 8) {
+      setIsError(true);
+      setMessage("Password must be at least 8 characters.");
+      return;
+    }
 
     try {
       setLoading(true);
@@ -71,7 +76,7 @@ function SupervisorRegister() {
       await api.post("/auth/supervisor/register", formData);
       setMessage("Request submitted. Awaiting admin approval.");
 
-      setTimeout(() => navigate("/encadrant"), 1400);
+      setTimeout(() => navigate("/encadrant/login"), 1400);
     } catch {
       setMessage("Registration failed");
       setIsError(true);
@@ -180,6 +185,7 @@ function SupervisorRegister() {
                     onChange={handleChange}
                     placeholder="At least 8 characters"
                     className="pl-9"
+                    minLength={8}
                     required
                   />
                 </div>

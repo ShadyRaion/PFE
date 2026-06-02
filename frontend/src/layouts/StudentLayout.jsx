@@ -24,7 +24,6 @@ const buildSections = () => [
     label: "Journey",
     items: [
       { to: "/mon-cv", label: "My Resume", icon: FileText },
-      { to: "/academic-report", label: "Final report", icon: GraduationCap },
       { to: "/binome", label: "Team", icon: Users, alertKey: "binome" },
       { to: "/subjects", label: "Catalog", icon: BookMarked },
       { to: "/recommendations", label: "Recommendations", icon: Sparkles },
@@ -34,6 +33,7 @@ const buildSections = () => [
         icon: ClipboardList,
         alertKey: "applications",
       },
+      { to: "/academic-report", label: "Final report", icon: GraduationCap },
     ],
   },
   {

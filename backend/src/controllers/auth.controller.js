@@ -21,6 +21,11 @@ const sanitizeUser = (user) => {
   return safeUser;
 };
 
+const MIN_PASSWORD_LENGTH = 8;
+
+const isPasswordTooShort = (password) =>
+  typeof password !== "string" || password.length < MIN_PASSWORD_LENGTH;
+
 const invalidCredentials = (res) => {
   return res.status(401).json({
     message: "Email ou mot de passe incorrect.",
@@ -60,6 +65,12 @@ const register = async (req, res) => {
     if (!fullName || !email || !password) {
       return res.status(400).json({
         message: "Nom, email et mot de passe requis.",
+      });
+    }
+
+    if (isPasswordTooShort(password)) {
+      return res.status(400).json({
+        message: "Password must be at least 8 characters.",
       });
     }
 
@@ -169,6 +180,12 @@ const supervisorRegister = async (req, res) => {
     if (!fullName || !email || !password) {
       return res.status(400).json({
         message: "Nom, email et mot de passe requis.",
+      });
+    }
+
+    if (isPasswordTooShort(password)) {
+      return res.status(400).json({
+        message: "Password must be at least 8 characters.",
       });
     }
 

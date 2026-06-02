@@ -15,6 +15,7 @@ import {
   Mail,
   User,
   CheckCircle2,
+  Languages,
   Clock,
   XCircle,
   Inbox,
@@ -37,6 +38,51 @@ import {
 } from "../../components/ui";
 import DateRangeFilter from "../../components/filters/DateRangeFilter";
 import { createDateRange, matchesDateRange } from "../../utils/filters";
+
+const formatExtractedLabel = (value) =>
+  String(value || "")
+    .replace(/([A-Z])/g, " $1")
+    .replace(/[_-]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim()
+    .replace(/^./, (letter) => letter.toUpperCase());
+
+const formatExtractedValue = (value) => {
+  if (value === null || value === undefined || value === "") return "-";
+  if (Array.isArray(value)) {
+    return value
+      .map((item) => {
+        if (typeof item === "object" && item !== null) {
+          return Object.entries(item)
+            .filter(([, entryValue]) => entryValue !== null && entryValue !== undefined && entryValue !== "")
+            .map(([key, entryValue]) => `${formatExtractedLabel(key)}: ${formatExtractedValue(entryValue)}`)
+            .join(" | ");
+        }
+        return String(item);
+      })
+      .filter(Boolean)
+      .join(", ");
+  }
+  if (typeof value === "object") {
+    return Object.entries(value)
+      .filter(([, entryValue]) => entryValue !== null && entryValue !== undefined && entryValue !== "")
+      .map(([key, entryValue]) => `${formatExtractedLabel(key)}: ${formatExtractedValue(entryValue)}`)
+      .join(" | ");
+  }
+  return String(value);
+};
+
+function DetailCard({ icon: Icon, label, children }) {
+  return (
+    <div className="rounded-xl border border-[#cfe1e8] bg-slate-50 p-4">
+      <p className="detail-card-label inline-flex items-center gap-1.5 text-xs font-black uppercase tracking-widest">
+        {Icon && <Icon className="h-3.5 w-3.5" strokeWidth={2.5} />}
+        {label}
+      </p>
+      <div className="mt-1.5 font-bold text-slate-950">{children}</div>
+    </div>
+  );
+}
 
 function SubjectDetailsModal({ subject, onClose, onOpenDocument }) {
   if (!subject) return null;
@@ -127,6 +173,170 @@ function SubjectDetailsModal({ subject, onClose, onOpenDocument }) {
               </div>
             </div>
           </div>
+        </CardBody>
+      </Card>
+    </div>
+  );
+}
+
+function StudentDetailsModal({ student, application, onClose, onOpenCV }) {
+  if (!student) return null;
+
+  const cv = student.cvs?.[0];
+  const extractedSkills = cv?.extractedSkills || [];
+  const extractedData = cv?.extractedData || {};
+  const resumeLanguages = Array.isArray(extractedData.languages)
+    ? extractedData.languages
+    : [];
+  const infoCards = [
+    ["University", student.university, GraduationCap],
+    ["Specialty", student.specialty, Briefcase],
+    ["Phone", student.phone, Phone],
+    ["Education field", student.educationField, GraduationCap],
+    ["Degree level", student.degreeLevel, GraduationCap],
+    ["Academic year", student.academicYear, Calendar],
+    ["Internship type", student.internshipType, Briefcase],
+    [
+      "Desired start date",
+      student.internshipStartDate
+        ? new Date(student.internshipStartDate).toLocaleDateString()
+        : "-",
+      Calendar,
+    ],
+    ["Desired duration", student.desiredDuration, Clock],
+  ];
+  const extractedEntries = Object.entries(extractedData || {}).filter(
+    ([key, value]) =>
+      key !== "skills" &&
+      key !== "allSkills" &&
+      key !== "technicalSkills" &&
+      key !== "detectedSkills" &&
+      key !== "extractedSkills" &&
+      key !== "languages" &&
+      key !== "language" &&
+      key !== "detectedLanguage" &&
+      key !== "resumeLanguage" &&
+      key !== "languageDetected" &&
+      value !== null &&
+      value !== undefined &&
+      !(Array.isArray(value) && value.length === 0) &&
+      !(typeof value === "object" && !Array.isArray(value) && Object.keys(value).length === 0)
+  );
+  const visibleExtractedEntries = [
+    ...(resumeLanguages.length > 0 ? [["languages", resumeLanguages]] : []),
+    ...extractedEntries,
+  ];
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-6">
+      <Card className="max-h-[90vh] w-full max-w-2xl overflow-y-auto">
+        <CardBody>
+          <div className="flex items-start justify-between gap-4">
+            <div className="min-w-0">
+              <h2 className="inline-flex items-center gap-2 text-2xl font-black text-slate-950">
+                <User className="h-6 w-6 text-cyan-700" strokeWidth={2.5} />
+                {student.fullName}
+              </h2>
+              <p className="mt-1 inline-flex items-center gap-1.5 text-sm text-slate-600">
+                <Mail className="h-3.5 w-3.5" strokeWidth={2.5} />
+                {student.email}
+              </p>
+            </div>
+            <Button variant="secondary" size="sm" iconLeft={X} onClick={onClose}>
+              Close
+            </Button>
+          </div>
+
+          <div className="mt-6 grid gap-3 md:grid-cols-2">
+            {infoCards
+              .filter(([label]) => ["University", "Specialty", "Phone"].includes(label))
+              .map(([label, value, Icon]) => (
+                <DetailCard key={label} label={label} icon={Icon}>
+                  {value || "-"}
+                </DetailCard>
+              ))}
+
+            <DetailCard label="Score" icon={CheckCircle2}>
+              <div className="mt-1.5">
+                {application?.score !== null && application?.score !== undefined ? (
+                  <ScoreBadge score={application.score} size="lg" />
+                ) : (
+                  <p className="font-bold text-slate-500">-</p>
+                )}
+              </div>
+            </DetailCard>
+          </div>
+
+          <div className="mt-3 grid gap-3 md:grid-cols-2">
+            {infoCards
+              .filter(([label]) => !["University", "Specialty", "Phone"].includes(label))
+              .map(([label, value, Icon]) => (
+                <DetailCard key={label} label={label} icon={Icon}>
+                  {value || "-"}
+                </DetailCard>
+              ))}
+          </div>
+
+          {extractedSkills.length > 0 && (
+            <div className="mt-6 rounded-xl border border-[#cfe1e8] bg-slate-50 p-4">
+              <p className="detail-card-label inline-flex items-center gap-1.5 text-xs font-black uppercase tracking-widest">
+                <CheckCircle2 className="h-3.5 w-3.5" strokeWidth={2.5} />
+                Extracted skills
+              </p>
+              <div className="mt-3 flex flex-wrap gap-1.5">
+                {extractedSkills.map((skill) => (
+                  <Badge key={skill} variant="info">
+                    {skill}
+                  </Badge>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {visibleExtractedEntries.length > 0 && (
+            <div className="mt-4">
+              <p className="detail-card-label mb-3 inline-flex items-center gap-1.5 text-xs font-black uppercase tracking-widest">
+                <FileText className="h-3.5 w-3.5" strokeWidth={2.5} />
+                Extracted Resume data
+              </p>
+              <div className="grid gap-3 md:grid-cols-2">
+                {visibleExtractedEntries.map(([key, value]) => (
+                  <DetailCard
+                    key={key}
+                    label={formatExtractedLabel(key)}
+                    icon={key === "languages" ? Languages : FileText}
+                  >
+                    {key === "languages" && Array.isArray(value) ? (
+                      <div className="mt-1 flex flex-wrap gap-1.5">
+                        {value.map((language, index) => (
+                          <Badge key={`${formatExtractedValue(language)}-${index}`} variant="neutral">
+                            {formatExtractedValue(language)}
+                          </Badge>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-sm leading-6">{formatExtractedValue(value)}</p>
+                    )}
+                  </DetailCard>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {cv ? (
+            <div className="mt-6 flex flex-wrap gap-2">
+              <Button
+                iconLeft={FileText}
+                onClick={() => onOpenCV(cv.id, cv.originalName || cv.fileName)}
+              >
+                Open Resume
+              </Button>
+            </div>
+          ) : (
+            <p className="mt-6 rounded-xl border border-[#cfe1e8] bg-slate-50 p-4 text-sm text-slate-600">
+              Resume unavailable.
+            </p>
+          )}
         </CardBody>
       </Card>
     </div>
@@ -672,95 +882,12 @@ function SupervisorApplications() {
       </section>
 
       {selectedCandidate && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-6">
-          <Card className="max-h-[90vh] w-full max-w-2xl overflow-y-auto">
-            <CardBody>
-              <div className="flex items-start justify-between gap-4">
-                <div className="min-w-0">
-                  <h2 className="inline-flex items-center gap-2 text-2xl font-black text-slate-950">
-                    <User className="h-6 w-6 text-cyan-700" strokeWidth={2.5} />
-                    {selectedCandidate.fullName}
-                  </h2>
-                  <p className="mt-1 inline-flex items-center gap-1.5 text-sm text-slate-600">
-                    <Mail className="h-3.5 w-3.5" strokeWidth={2.5} />
-                    {selectedCandidate.email}
-                  </p>
-                </div>
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  iconLeft={X}
-                  onClick={() => setSelectedCandidate(null)}
-                >
-                  Close
-                </Button>
-              </div>
-
-              <div className="mt-6 grid gap-3 md:grid-cols-2">
-                <div className="rounded-xl border border-[#cfe1e8] bg-slate-50 p-4">
-                  <p className="inline-flex items-center gap-1.5 text-xs font-black uppercase tracking-widest text-slate-500">
-                    <GraduationCap className="h-3.5 w-3.5" strokeWidth={2.5} />
-                    University
-                  </p>
-                  <p className="mt-1.5 font-bold text-slate-950">
-                    {selectedCandidate.university || "-"}
-                  </p>
-                </div>
-
-                <div className="rounded-xl border border-[#cfe1e8] bg-slate-50 p-4">
-                  <p className="inline-flex items-center gap-1.5 text-xs font-black uppercase tracking-widest text-slate-500">
-                    <Briefcase className="h-3.5 w-3.5" strokeWidth={2.5} />
-                    Specialty
-                  </p>
-                  <p className="mt-1.5 font-bold text-slate-950">
-                    {selectedCandidate.specialty || "-"}
-                  </p>
-                </div>
-
-                <div className="rounded-xl border border-[#cfe1e8] bg-slate-50 p-4">
-                  <p className="inline-flex items-center gap-1.5 text-xs font-black uppercase tracking-widest text-slate-500">
-                    <Phone className="h-3.5 w-3.5" strokeWidth={2.5} />
-                    Phone
-                  </p>
-                  <p className="mt-1.5 font-bold text-slate-950">
-                    {selectedCandidate.phone || "-"}
-                  </p>
-                </div>
-
-                <div className="rounded-xl border border-[#cfe1e8] bg-slate-50 p-4">
-                  <p className="text-xs font-black uppercase tracking-widest text-slate-500">
-                    Compatibility score
-                  </p>
-                  <div className="mt-1.5">
-                    <ScoreBadge
-                      score={selectedCandidate.application?.score || 0}
-                      size="lg"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {selectedCandidate.cvs?.[0] ? (
-                <Button
-                  className="mt-6"
-                  iconLeft={FileText}
-                  onClick={() =>
-                    openCV(
-                      selectedCandidate.cvs[0].id,
-                      selectedCandidate.cvs[0].originalName
-                    )
-                  }
-                >
-                  Open Resume
-                </Button>
-              ) : (
-                <p className="mt-6 rounded-xl border border-[#cfe1e8] bg-slate-50 p-4 text-sm text-slate-600">
-                  Resume not available.
-                </p>
-              )}
-            </CardBody>
-          </Card>
-        </div>
+        <StudentDetailsModal
+          student={selectedCandidate}
+          application={selectedCandidate.application}
+          onClose={() => setSelectedCandidate(null)}
+          onOpenCV={openCV}
+        />
       )}
 
       {selectedSubject && (

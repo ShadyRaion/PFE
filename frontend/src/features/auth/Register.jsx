@@ -58,6 +58,10 @@ function Register() {
       setMessage("Please choose your education field.");
       return;
     }
+    if (formData.password.length < 8) {
+      setMessage("Password must be at least 8 characters.");
+      return;
+    }
 
     if (!formData.degreeLevel) {
       setMessage("Degree level is required.");
@@ -184,6 +188,7 @@ function Register() {
                     onChange={handleChange}
                     placeholder="At least 8 characters"
                     className="pl-9"
+                    minLength={8}
                     required
                   />
                 </div>

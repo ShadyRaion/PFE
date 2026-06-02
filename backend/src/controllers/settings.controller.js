@@ -38,6 +38,12 @@ const updateSettings = async (req, res) => {
     }
 
     if (newPassword) {
+      if (newPassword.length < 8) {
+        return res.status(400).json({
+          message: "Password must be at least 8 characters.",
+        });
+      }
+
       if (!currentPassword) {
         return res.status(400).json({ message: "Current password is required" });
       }

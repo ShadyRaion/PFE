@@ -15,6 +15,12 @@ function Settings() {
 
   const updateSettings = async (e) => {
     e.preventDefault();
+    if (newPassword && newPassword.length < 8) {
+      setIsError(true);
+      setMessage("Password must be at least 8 characters.");
+      return;
+    }
+
     try {
       setSaving(true);
       setMessage("");
@@ -97,6 +103,7 @@ function Settings() {
                   onChange={(e) => setNewPassword(e.target.value)}
                   placeholder="At least 8 characters"
                   className="pl-9"
+                  minLength={8}
                 />
               </div>
             </Field>
