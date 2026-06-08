@@ -93,8 +93,8 @@ function Binome() {
       setEmail("");
       await fetchRequests();
       refreshAlerts();
-    } catch {
-      setMessage("Error while sending.");
+    } catch (error) {
+      setMessage(error.response?.data?.message || "Error while sending.");
     } finally {
       setSending(false);
     }
@@ -110,8 +110,8 @@ function Binome() {
       await fetchBinome();
       await fetchRequests();
       refreshAlerts();
-    } catch {
-      setMessage("Error.");
+    } catch (error) {
+      setMessage(error.response?.data?.message || "Error.");
       await fetchAll();
       refreshAlerts();
     } finally {
@@ -252,6 +252,10 @@ function Binome() {
             </p>
           </CardHeader>
           <CardBody>
+            <p className="mb-3 text-sm font-semibold text-slate-600">
+              You can only invite a student from the same university, degree
+              level, and academic year.
+            </p>
             <div className="flex flex-col gap-3 sm:flex-row">
               <Field htmlFor="email" className="flex-1">
                 <div className="relative">

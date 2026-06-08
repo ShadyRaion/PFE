@@ -10,6 +10,41 @@ const {
   resolveInfoAlerts,
 } = require("../services/pageAlert.service");
 
+const BINOME_PROFILE_REQUIREMENT_MESSAGE =
+  "You can only create a team with a student from the same university, degree level, and academic year.";
+
+const normalizeComparableProfileValue = (value) =>
+  String(value || "").trim().toLowerCase();
+
+const getBinomeProfileMismatch = (studentA, studentB) => {
+  if (!studentA || !studentB) return BINOME_PROFILE_REQUIREMENT_MESSAGE;
+
+  const requiredFields = ["university", "degreeLevel", "academicYear"];
+  const hasMissingField = requiredFields.some(
+    (field) =>
+      !normalizeComparableProfileValue(studentA[field]) ||
+      !normalizeComparableProfileValue(studentB[field])
+  );
+
+  if (hasMissingField) return BINOME_PROFILE_REQUIREMENT_MESSAGE;
+
+  const sameUniversity =
+    normalizeComparableProfileValue(studentA.university) ===
+    normalizeComparableProfileValue(studentB.university);
+  const sameDegreeLevel =
+    normalizeComparableProfileValue(studentA.degreeLevel) ===
+    normalizeComparableProfileValue(studentB.degreeLevel);
+  const sameAcademicYear =
+    normalizeComparableProfileValue(studentA.academicYear) ===
+    normalizeComparableProfileValue(studentB.academicYear);
+
+  if (!sameUniversity || !sameDegreeLevel || !sameAcademicYear) {
+    return BINOME_PROFILE_REQUIREMENT_MESSAGE;
+  }
+
+  return null;
+};
+
 const getUserAffectedApplication = async (userId) => {
   return prisma.application.findFirst({
     where: {
@@ -191,6 +226,14 @@ const createBinomeRequest = async (req, res) => {
       });
     }
 
+    const profileMismatch = getBinomeProfileMismatch(req.user, receiver);
+    if (profileMismatch) {
+      return res.status(400).json({
+        message: profileMismatch,
+        code: "BINOME_PROFILE_MISMATCH",
+      });
+    }
+
     const receiverAffected = await getUserAffectedApplication(receiver.id);
 
     if (receiverAffected) {
@@ -354,6 +397,23 @@ const acceptBinomeRequest = async (req, res) => {
 
       return res.status(200).json({
         message: "Invitation déjà traitée.",
+      });
+    }
+
+    const profileMismatch = getBinomeProfileMismatch(
+      request.student1,
+      request.student2
+    );
+    if (profileMismatch) {
+      await resolveActionAlert({
+        userId: req.user.id,
+        pageKey: "binome",
+        refId: request.id,
+      });
+
+      return res.status(400).json({
+        message: profileMismatch,
+        code: "BINOME_PROFILE_MISMATCH",
       });
     }
 
