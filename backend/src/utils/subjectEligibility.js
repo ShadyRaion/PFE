@@ -11,6 +11,42 @@ const REQUIRED_STUDENT_PROFILE_FIELDS = [
   "internshipType",
 ];
 
+const PFE_ALLOWED_ACADEMIC_YEARS = ["FINAL_YEAR"];
+
+const normalizeSubjectAcademicYearsForInternshipType = ({
+  internshipType,
+  allowedAcademicYears = [],
+}) => {
+  const years = Array.isArray(allowedAcademicYears)
+    ? allowedAcademicYears
+    : [];
+
+  if (internshipType !== "PFE") {
+    return {
+      errors: [],
+      allowedAcademicYears: years,
+    };
+  }
+
+  const invalidYears = years.filter(
+    (year) => !PFE_ALLOWED_ACADEMIC_YEARS.includes(year)
+  );
+
+  if (invalidYears.length > 0) {
+    return {
+      errors: [
+        "PFE subjects can only be allowed for final-year students.",
+      ],
+      allowedAcademicYears: years,
+    };
+  }
+
+  return {
+    errors: [],
+    allowedAcademicYears: PFE_ALLOWED_ACADEMIC_YEARS,
+  };
+};
+
 const isStudentProfileComplete = (student) => {
   if (!student) return false;
   return REQUIRED_STUDENT_PROFILE_FIELDS.every((key) => {
@@ -162,11 +198,24 @@ const validateSubjectEligibilityInput = (data, { requireInternshipType = false }
     }
   }
 
+  const academicYearRule = normalizeSubjectAcademicYearsForInternshipType({
+    internshipType: out.internshipType,
+    allowedAcademicYears: out.allowedAcademicYears || [],
+  });
+
+  if (academicYearRule.errors.length > 0) {
+    errors.push(...academicYearRule.errors);
+  } else if (out.internshipType === "PFE") {
+    out.allowedAcademicYears = academicYearRule.allowedAcademicYears;
+  }
+
   return { errors, data: out };
 };
 
 module.exports = {
   REQUIRED_STUDENT_PROFILE_FIELDS,
+  PFE_ALLOWED_ACADEMIC_YEARS,
+  normalizeSubjectAcademicYearsForInternshipType,
   isStudentProfileComplete,
   missingStudentProfileFields,
   checkSubjectEligibility,

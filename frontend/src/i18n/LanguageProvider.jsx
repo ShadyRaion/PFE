@@ -68,9 +68,9 @@ const replaceFrenchTermsInEnglish = (value) => {
 
   translated = translated.replace(/\bPFE\b/g, (match, offset, fullText) => {
     const prefix = fullText.slice(Math.max(0, offset - 20), offset);
-    return prefix.endsWith("Final-year project (")
+    return prefix.endsWith("Project (")
       ? match
-      : "Final-year project (PFE)";
+      : "Project (PFE)";
   });
 
   return translated;

@@ -23,6 +23,7 @@ const {
   buildEligibilityWhere,
   checkSubjectEligibility,
   isStudentProfileComplete,
+  normalizeSubjectAcademicYearsForInternshipType,
   validateSubjectEligibilityInput,
 } = require("../utils/subjectEligibility");
 
@@ -66,6 +67,17 @@ const applicationInclude = {
     },
   },
 };
+
+const PROTECTED_ASSIGNMENT_STATUSES = ["AFFECTED", "COMPLETED"];
+
+const hasProtectedAssignedApplication = (subject) => {
+  return (subject?.applications || []).some((application) =>
+    PROTECTED_ASSIGNMENT_STATUSES.includes(application.status)
+  );
+};
+
+const assignedSubjectActionMessage =
+  "This subject already has an assigned student and cannot be archived or deleted.";
 
 const recalculateSubjectScoresLater = (subjectId, context) => {
   setImmediate(async () => {
@@ -444,6 +456,38 @@ const updateSubject = async (req, res) => {
       nextPlaces = parsedPlaces;
     }
 
+    const nextInternshipType =
+      internshipType !== undefined
+        ? eligibility.data.internshipType ?? null
+        : subject.internshipType;
+    const nextAllowedAcademicYears =
+      allowedAcademicYears !== undefined
+        ? eligibility.data.allowedAcademicYears || []
+        : subject.allowedAcademicYears;
+    const academicYearRule =
+      normalizeSubjectAcademicYearsForInternshipType({
+        internshipType: nextInternshipType,
+        allowedAcademicYears: nextAllowedAcademicYears,
+      });
+
+    if (academicYearRule.errors.length > 0) {
+      return res.status(400).json({
+        message: academicYearRule.errors[0],
+      });
+    }
+
+    const wantsArchive =
+      archived !== undefined &&
+      (archived === true || archived === "true") &&
+      !subject.archived;
+
+    if (wantsArchive && hasProtectedAssignedApplication(subject)) {
+      return res.status(400).json({
+        message: assignedSubjectActionMessage,
+        code: "SUBJECT_HAS_ASSIGNED_STUDENT",
+      });
+    }
+
     const updatedSubject = await prisma.subject.update({
       where: {
         id,
@@ -461,18 +505,12 @@ const updateSubject = async (req, res) => {
             ? archived === true || archived === "true"
             : subject.archived,
         educationField: nextEducationField,
-        internshipType:
-          internshipType !== undefined
-            ? eligibility.data.internshipType ?? null
-            : subject.internshipType,
+        internshipType: nextInternshipType,
         allowedDegreeLevels:
           allowedDegreeLevels !== undefined
             ? eligibility.data.allowedDegreeLevels || []
             : subject.allowedDegreeLevels,
-        allowedAcademicYears:
-          allowedAcademicYears !== undefined
-            ? eligibility.data.allowedAcademicYears || []
-            : subject.allowedAcademicYears,
+        allowedAcademicYears: academicYearRule.allowedAcademicYears,
       },
       include: {
         documents: true,
@@ -516,6 +554,9 @@ const archiveSubject = async (req, res) => {
       where: {
         id,
       },
+      include: {
+        applications: applicationInclude,
+      },
     });
 
     if (!subject) {
@@ -527,6 +568,13 @@ const archiveSubject = async (req, res) => {
     if (subject.supervisorId !== req.user.id) {
       return res.status(403).json({
         message: "Accès refusé.",
+      });
+    }
+
+    if (hasProtectedAssignedApplication(subject)) {
+      return res.status(400).json({
+        message: assignedSubjectActionMessage,
+        code: "SUBJECT_HAS_ASSIGNED_STUDENT",
       });
     }
 
@@ -628,6 +676,7 @@ const deleteSubject = async (req, res) => {
       },
       include: {
         documents: true,
+        applications: applicationInclude,
       },
     });
 
@@ -640,6 +689,13 @@ const deleteSubject = async (req, res) => {
     if (subject.supervisorId !== req.user.id) {
       return res.status(403).json({
         message: "Accès refusé.",
+      });
+    }
+
+    if (hasProtectedAssignedApplication(subject)) {
+      return res.status(400).json({
+        message: assignedSubjectActionMessage,
+        code: "SUBJECT_HAS_ASSIGNED_STUDENT",
       });
     }
 

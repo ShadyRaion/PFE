@@ -50,7 +50,7 @@ function PlatformHome() {
     {
       icon: GraduationCap,
       title: "Intern Space",
-      text: "Access the student portal to manage your Resume, browse final-year project subjects, and track your applications and messages.",
+      text: "Access the student portal to manage your Resume, browse project subjects, and track your applications and messages.",
       to: "/intern",
       action: "Continue as intern",
     },

@@ -6,6 +6,8 @@ export const ACADEMIC_YEAR_OPTIONS = [
   { value: "FINAL_YEAR", label: "Final year", labelFr: "Année terminale" },
 ];
 
+export const PFE_ALLOWED_ACADEMIC_YEARS = ["FINAL_YEAR"];
+
 export const ACADEMIC_YEARS_BY_DEGREE = {
   Licence: ["FIRST_YEAR", "SECOND_YEAR", "FINAL_YEAR"],
   Master: ["FIRST_YEAR", "FINAL_YEAR"],
@@ -15,6 +17,16 @@ export const ACADEMIC_YEARS_BY_DEGREE = {
 export const getAcademicYearOptions = (degreeLevel) => {
   const allowed = ACADEMIC_YEARS_BY_DEGREE[degreeLevel] || [];
   return ACADEMIC_YEAR_OPTIONS.filter((opt) => allowed.includes(opt.value));
+};
+
+export const getSubjectAcademicYearOptions = (internshipType) => {
+  if (internshipType === "PFE") {
+    return ACADEMIC_YEAR_OPTIONS.filter((opt) =>
+      PFE_ALLOWED_ACADEMIC_YEARS.includes(opt.value)
+    );
+  }
+
+  return ACADEMIC_YEAR_OPTIONS;
 };
 
 export const INTERNSHIP_TYPES = ["PFE", "Été", "Immersion"];
@@ -77,7 +89,7 @@ export const SUPERVISOR_DIVISIONS = Object.values(
 ).flat();
 
 export const INTERNSHIP_TYPE_OPTIONS = [
-  { value: "PFE", label: "Final-year project (PFE)", labelFr: "Projet de fin d'études (PFE)" },
+  { value: "PFE", label: "Project (PFE)", labelFr: "Projet de fin d'études (PFE)" },
   { value: "Été", label: "Summer internship", labelFr: "Stage d'été" },
   { value: "Immersion", label: "Immersion / discovery", labelFr: "Immersion / découverte" },
 ];

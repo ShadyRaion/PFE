@@ -45,10 +45,20 @@ import {
   INTERNSHIP_TYPE_OPTIONS,
   DEGREE_LEVELS,
   ACADEMIC_YEAR_OPTIONS,
+  PFE_ALLOWED_ACADEMIC_YEARS,
   getAcademicYearLabel,
   getInternshipTypeLabel,
+  getSubjectAcademicYearOptions,
 } from "../../constants/profileFields";
 import { formatManagerPlaces } from "../../utils/subjectPlaces";
+
+const ASSIGNED_SUBJECT_STATUSES = ["AFFECTED", "COMPLETED"];
+
+const hasAssignedStudent = (subject) => {
+  return (subject?.applications || []).some((application) =>
+    ASSIGNED_SUBJECT_STATUSES.includes(application.status)
+  );
+};
 
 function SubjectDetailsModal({ subject, onClose, onOpenDocument }) {
   if (!subject) return null;
@@ -261,6 +271,10 @@ function MySubjects() {
     requiredSkills: "",
     languages: "",
   });
+  const editAcademicYearOptions = getSubjectAcademicYearOptions(
+    editForm.internshipType
+  );
+  const isEditingPfeSubject = editForm.internshipType === "PFE";
 
   const fetchSubjects = useCallback(async () => {
     try {
@@ -338,6 +352,7 @@ function MySubjects() {
   const openEdit = (subject) => {
     setEditingSubject(subject);
     setEditDocuments([]);
+    const isPfeSubject = subject.internshipType === "PFE";
 
     setEditForm({
       title: subject.title || "",
@@ -347,7 +362,15 @@ function MySubjects() {
       educationField: subject.educationField || "",
       internshipType: subject.internshipType || "",
       allowedDegreeLevels: subject.allowedDegreeLevels || [],
-      allowedAcademicYears: subject.allowedAcademicYears || [],
+      allowedAcademicYears: isPfeSubject
+        ? (subject.allowedAcademicYears || []).filter((year) =>
+            PFE_ALLOWED_ACADEMIC_YEARS.includes(year)
+          ).length > 0
+          ? (subject.allowedAcademicYears || []).filter((year) =>
+              PFE_ALLOWED_ACADEMIC_YEARS.includes(year)
+            )
+          : PFE_ALLOWED_ACADEMIC_YEARS
+        : subject.allowedAcademicYears || [],
       technologies: (subject.technologies || []).join(", "),
       requiredSkills: (subject.requiredSkills || []).join(", "),
       languages: (subject.languages || []).join(", "),
@@ -356,6 +379,16 @@ function MySubjects() {
 
   const toggleEditMultiValue = (field, value) => {
     setEditForm((prev) => {
+      if (
+        field === "allowedAcademicYears" &&
+        prev.internshipType === "PFE"
+      ) {
+        return {
+          ...prev,
+          allowedAcademicYears: PFE_ALLOWED_ACADEMIC_YEARS,
+        };
+      }
+
       const current = prev[field] || [];
       return {
         ...prev,
@@ -416,8 +449,8 @@ function MySubjects() {
       setEditDocuments([]);
       await fetchSubjectsAndSync();
       setEditingSubject(null);
-    } catch {
-      setMessage("Error while editing.");
+    } catch (error) {
+      setMessage(error.response?.data?.message || "Error while editing.");
     } finally {
       setSavingSubject(false);
     }
@@ -428,8 +461,8 @@ function MySubjects() {
       await api.patch(`/subjects/${subjectId}/archive`);
       setMessage("Subject archived.");
       fetchSubjects();
-    } catch {
-      setMessage("Error while archiving.");
+    } catch (error) {
+      setMessage(error.response?.data?.message || "Error while archiving.");
     }
   };
 
@@ -451,8 +484,8 @@ function MySubjects() {
       await api.delete(`/subjects/${subjectId}`);
       setMessage("Subject deleted.");
       fetchSubjects();
-    } catch {
-      setMessage("Error while deleting.");
+    } catch (error) {
+      setMessage(error.response?.data?.message || "Error while deleting.");
     }
   };
 
@@ -621,9 +654,15 @@ function MySubjects() {
       </Card>
 
       <section className="space-y-4">
-        {visibleSubjects.map((subject) => (
-          <Card key={subject.id}>
-            <CardBody>
+        {visibleSubjects.map((subject) => {
+          const subjectHasAssignedStudent = hasAssignedStudent(subject);
+          const assignedActionTitle = subjectHasAssignedStudent
+            ? "Assigned subjects cannot be archived or deleted."
+            : undefined;
+
+          return (
+            <Card key={subject.id}>
+              <CardBody>
               <div className="flex flex-wrap items-start justify-between gap-5">
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-center gap-2">
@@ -723,6 +762,8 @@ function MySubjects() {
                         variant="ghost"
                         className="my-subjects-archive-button border border-slate-500"
                         iconLeft={Archive}
+                        disabled={subjectHasAssignedStudent}
+                        title={assignedActionTitle}
                         onClick={() => archiveSubject(subject.id)}
                       >
                         Archive
@@ -731,6 +772,8 @@ function MySubjects() {
                         size="sm"
                         variant="danger"
                         iconLeft={Trash2}
+                        disabled={subjectHasAssignedStudent}
+                        title={assignedActionTitle}
                         onClick={() => setConfirmDelete(subject.id)}
                       >
                         Delete
@@ -750,8 +793,9 @@ function MySubjects() {
                 </div>
               </div>
             </CardBody>
-          </Card>
-        ))}
+            </Card>
+          );
+        })}
 
         {visibleSubjects.length === 0 && (
           <EmptyState
@@ -760,7 +804,7 @@ function MySubjects() {
             description={
               archiveMode
                 ? "You have no archived subject."
-                : "Create your first final-year project subject to get started."
+                : "Create your first project subject to get started."
             }
           />
         )}
@@ -884,6 +928,10 @@ function MySubjects() {
                       setEditForm((prev) => ({
                         ...prev,
                         internshipType: e.target.value,
+                        allowedAcademicYears:
+                          e.target.value === "PFE"
+                            ? PFE_ALLOWED_ACADEMIC_YEARS
+                            : prev.allowedAcademicYears,
                       }))
                     }
                   >
@@ -921,10 +969,14 @@ function MySubjects() {
 
                 <Field
                   label="Allowed academic years"
-                  hint="Leave all unchecked to allow every academic year."
+                  hint={
+                    isEditingPfeSubject
+                      ? "PFE subjects are restricted to final-year students."
+                      : "Leave all unchecked to allow every academic year."
+                  }
                 >
                   <div className="flex flex-wrap gap-3">
-                    {ACADEMIC_YEAR_OPTIONS.map((option) => (
+                    {editAcademicYearOptions.map((option) => (
                       <label
                         key={option.value}
                         className="inline-flex items-center gap-2 rounded-lg border border-[#cfe1e8] bg-white px-3 py-1.5 text-sm font-semibold text-slate-700"
@@ -934,6 +986,7 @@ function MySubjects() {
                           checked={editForm.allowedAcademicYears.includes(
                             option.value
                           )}
+                          disabled={isEditingPfeSubject}
                           onChange={() =>
                             toggleEditMultiValue(
                               "allowedAcademicYears",

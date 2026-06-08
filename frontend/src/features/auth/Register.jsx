@@ -36,6 +36,10 @@ function Register() {
   const [loading, setLoading] = useState(false);
 
   const academicYearOptions = getAcademicYearOptions(formData.degreeLevel);
+  const internshipTypeOptions =
+    formData.academicYear && formData.academicYear !== "FINAL_YEAR"
+      ? INTERNSHIP_TYPES.filter((value) => value !== "PFE")
+      : INTERNSHIP_TYPES;
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -45,6 +49,11 @@ function Register() {
         const allowed = ACADEMIC_YEARS_BY_DEGREE[value] || [];
         if (!allowed.includes(prev.academicYear)) {
           next.academicYear = "";
+        }
+      }
+      if (name === "academicYear" && value !== "FINAL_YEAR") {
+        if (prev.internshipType === "PFE") {
+          next.internshipType = "";
         }
       }
       return next;
@@ -73,6 +82,13 @@ function Register() {
     }
     if (!formData.internshipType) {
       setMessage("Internship type is required.");
+      return;
+    }
+    if (
+      formData.internshipType === "PFE" &&
+      formData.academicYear !== "FINAL_YEAR"
+    ) {
+      setMessage("PFE is only available for final-year students.");
       return;
     }
     if (!formData.internshipStartDate) {
@@ -111,8 +127,8 @@ function Register() {
           </h1>
 
           <p className="mt-6 max-w-xl text-lg leading-8 text-slate-600">
-            Join the STB Interns platform to apply for final-year project
-            subjects and start your career.
+            Join the STB Interns platform to apply for project subjects and
+            start your career.
           </p>
         </div>
 
@@ -280,7 +296,7 @@ function Register() {
                   required
                 >
                   <option value="">Select your internship type</option>
-                  {INTERNSHIP_TYPES.map((value) => (
+                  {internshipTypeOptions.map((value) => (
                     <option key={value} value={value}>
                       {value}
                     </option>

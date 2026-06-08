@@ -7,7 +7,7 @@ const features = [
   {
     icon: PlusCircle,
     title: "Create subjects",
-    text: "Publish final-year project topics for interns to apply to.",
+    text: "Publish project topics for interns to apply to.",
   },
   {
     icon: Inbox,
@@ -36,7 +36,7 @@ function SupervisorLanding() {
           </p>
 
           <h1 className="mt-4 text-5xl font-black leading-tight text-slate-950 sm:text-6xl">
-            Manage your final-year project subjects.
+            Manage your project subjects.
           </h1>
 
           <p className="mt-6 max-w-xl text-lg leading-8 text-slate-600">

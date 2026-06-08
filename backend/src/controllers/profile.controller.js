@@ -70,6 +70,20 @@ const updateMyProfile = async (req, res) => {
         ) {
           studentInput.degreeLevel = req.user.degreeLevel;
         }
+        if (
+          studentInput.internshipType !== undefined &&
+          studentInput.academicYear === undefined &&
+          req.user.academicYear
+        ) {
+          studentInput.academicYear = req.user.academicYear;
+        }
+        if (
+          studentInput.academicYear !== undefined &&
+          studentInput.internshipType === undefined &&
+          req.user.internshipType
+        ) {
+          studentInput.internshipType = req.user.internshipType;
+        }
         const result = validateStudentProfileFields(studentInput);
         if (result.errors.length) {
           return res.status(400).json({ message: result.errors[0] });

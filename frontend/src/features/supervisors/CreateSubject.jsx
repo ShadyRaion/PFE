@@ -23,7 +23,8 @@ import { EDUCATION_FIELD_OPTIONS } from "../../constants/educationFields";
 import {
   INTERNSHIP_TYPE_OPTIONS,
   DEGREE_LEVELS,
-  ACADEMIC_YEAR_OPTIONS,
+  PFE_ALLOWED_ACADEMIC_YEARS,
+  getSubjectAcademicYearOptions,
 } from "../../constants/profileFields";
 
 function CreateSubject() {
@@ -46,16 +47,38 @@ function CreateSubject() {
   const [message, setMessage] = useState("");
   const [isError, setIsError] = useState(false);
   const [creating, setCreating] = useState(false);
+  const academicYearOptions = getSubjectAcademicYearOptions(
+    form.internshipType
+  );
+  const isPfeSubject = form.internshipType === "PFE";
 
   const updateField = (field, value) => {
-    setForm((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
+    setForm((prev) => {
+      const next = {
+        ...prev,
+        [field]: value,
+      };
+
+      if (field === "internshipType" && value === "PFE") {
+        next.allowedAcademicYears = PFE_ALLOWED_ACADEMIC_YEARS;
+      }
+
+      return next;
+    });
   };
 
   const toggleMultiValue = (field, value) => {
     setForm((prev) => {
+      if (
+        field === "allowedAcademicYears" &&
+        prev.internshipType === "PFE"
+      ) {
+        return {
+          ...prev,
+          allowedAcademicYears: PFE_ALLOWED_ACADEMIC_YEARS,
+        };
+      }
+
       const arr = prev[field] || [];
       return {
         ...prev,
@@ -167,7 +190,7 @@ function CreateSubject() {
       <PageHeader
         icon={Plus}
         title="Create subject"
-        subtitle="Create a final-year project subject and add the required documents directly."
+        subtitle="Create a project subject and add the required documents directly."
       />
 
       {message && (
@@ -307,10 +330,14 @@ function CreateSubject() {
 
             <Field
               label="Allowed academic years"
-              hint="Leave all unchecked to allow every academic year."
+              hint={
+                isPfeSubject
+                  ? "PFE subjects are restricted to final-year students."
+                  : "Leave all unchecked to allow every academic year."
+              }
             >
               <div className="flex flex-wrap gap-3">
-                {ACADEMIC_YEAR_OPTIONS.map((opt) => (
+                {academicYearOptions.map((opt) => (
                   <label
                     key={opt.value}
                     className="inline-flex items-center gap-2 rounded-lg border border-[#cfe1e8] bg-white px-3 py-1.5 text-sm font-semibold text-slate-700"
@@ -318,6 +345,7 @@ function CreateSubject() {
                     <input
                       type="checkbox"
                       checked={form.allowedAcademicYears.includes(opt.value)}
+                      disabled={isPfeSubject}
                       onChange={() =>
                         toggleMultiValue("allowedAcademicYears", opt.value)
                       }

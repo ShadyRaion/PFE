@@ -9,6 +9,7 @@ const ACADEMIC_YEARS_BY_DEGREE = {
 };
 
 const INTERNSHIP_TYPES = ["PFE", "Été", "Immersion"];
+const PFE_STUDENT_ACADEMIC_YEAR = "FINAL_YEAR";
 
 const DESIRED_DURATIONS = [
   "1 month",
@@ -82,6 +83,8 @@ const validateStudentProfileFields = (data, { required = false } = {}) => {
   const out = {};
 
   let degreeLevelValue = null;
+  let academicYearValue = null;
+  let internshipTypeValue = null;
 
   if (data.degreeLevel !== undefined) {
     if (!isOneOf(data.degreeLevel, DEGREE_LEVELS)) {
@@ -101,7 +104,7 @@ const validateStudentProfileFields = (data, { required = false } = {}) => {
     ) {
       errors.push("Invalid academic year.");
     } else {
-      const academicYearValue = data.academicYear.trim();
+      academicYearValue = data.academicYear.trim();
       if (degreeLevelValue) {
         const allowed = ACADEMIC_YEARS_BY_DEGREE[degreeLevelValue] || [];
         if (!allowed.includes(academicYearValue)) {
@@ -123,10 +126,19 @@ const validateStudentProfileFields = (data, { required = false } = {}) => {
     if (!isOneOf(data.internshipType, INTERNSHIP_TYPES)) {
       errors.push("Invalid internship type.");
     } else {
-      out.internshipType = data.internshipType.trim();
+      internshipTypeValue = data.internshipType.trim();
+      out.internshipType = internshipTypeValue;
     }
   } else if (required) {
     errors.push("Internship type is required.");
+  }
+
+  if (
+    internshipTypeValue === "PFE" &&
+    academicYearValue &&
+    academicYearValue !== PFE_STUDENT_ACADEMIC_YEAR
+  ) {
+    errors.push("PFE is only available for final-year students.");
   }
 
   if (data.internshipStartDate !== undefined) {
@@ -222,6 +234,7 @@ module.exports = {
   ACADEMIC_YEAR_VALUES,
   ACADEMIC_YEARS_BY_DEGREE,
   INTERNSHIP_TYPES,
+  PFE_STUDENT_ACADEMIC_YEAR,
   DESIRED_DURATIONS,
   SUPERVISOR_DEPARTMENTS,
   SUPERVISOR_RANKS,
