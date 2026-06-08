@@ -115,6 +115,15 @@ function SupervisorLogin() {
                 </div>
               </Field>
 
+              <div className="text-right text-sm">
+                <Link
+                  to="/forgot-password"
+                  className="font-semibold text-cyan-700 hover:underline"
+                >
+                  Forgot password?
+                </Link>
+              </div>
+
               <Button
                 type="submit"
                 size="lg"

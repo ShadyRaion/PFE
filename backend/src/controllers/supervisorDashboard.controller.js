@@ -114,6 +114,20 @@ const parseInterviewAt = (value) => {
   return parsed;
 };
 
+const buildInterviewNotificationMessage = ({ subjectTitle, interviewAt, interviewLink }) => {
+  const parts = [`Votre entretien pour "${subjectTitle}" a ete planifie.`];
+
+  if (interviewAt) {
+    parts.push(`Date et heure : ${new Date(interviewAt).toLocaleString()}.`);
+  }
+
+  if (interviewLink) {
+    parts.push(`Lien : ${interviewLink}`);
+  }
+
+  return parts.join(" ");
+};
+
 const getMySubjectApplications = async (req, res) => {
   try {
     if (!ensureApprovedSupervisor(req, res)) return;
@@ -333,7 +347,11 @@ const approveApplication = async (req, res) => {
         await createNotification({
           recipientId: studentId,
           title: "Entretien planifie",
-          message: `Votre entretien pour "${approved.subject.title}" a ete planifie.`,
+          message: buildInterviewNotificationMessage({
+            subjectTitle: approved.subject.title,
+            interviewAt: approved.interviewAt,
+            interviewLink: approved.interviewLink,
+          }),
           type: "APPLICATION_INTERVIEW",
         });
 

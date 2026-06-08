@@ -76,7 +76,7 @@ function StudentDashboard() {
       icon: BookMarked,
       status: "Available",
       variant: "info",
-      text: "Explore PFE subjects",
+      text: "Explore subjects",
       to: "/subjects",
     },
     {

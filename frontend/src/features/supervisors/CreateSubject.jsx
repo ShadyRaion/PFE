@@ -167,7 +167,7 @@ function CreateSubject() {
       <PageHeader
         icon={Plus}
         title="Create subject"
-        subtitle="Create a PFE subject and add the required documents directly."
+        subtitle="Create a final-year project subject and add the required documents directly."
       />
 
       {message && (

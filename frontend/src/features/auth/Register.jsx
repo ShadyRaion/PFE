@@ -111,8 +111,8 @@ function Register() {
           </h1>
 
           <p className="mt-6 max-w-xl text-lg leading-8 text-slate-600">
-            Join the STB Interns platform to apply for PFE subjects and start
-            your career.
+            Join the STB Interns platform to apply for final-year project
+            subjects and start your career.
           </p>
         </div>
 

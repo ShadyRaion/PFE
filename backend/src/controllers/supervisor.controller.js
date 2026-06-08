@@ -13,7 +13,6 @@ const {
 } = require("../services/recommendation.service");
 const {
   getCandidateFaculties,
-  getCandidateIds,
   autoRejectSameFacultyApplications,
 } = require("../services/facultySubject.service");
 const {
@@ -380,6 +379,22 @@ const parseInterviewAt = (value) => {
   return parsed;
 };
 
+const buildInterviewNotificationMessage = ({ subjectTitle, interviewAt, interviewLink }) => {
+  const parts = [
+    `Votre entretien pour le sujet "${subjectTitle}" a ete planifie.`,
+  ];
+
+  if (interviewAt) {
+    parts.push(`Date et heure : ${new Date(interviewAt).toLocaleString()}.`);
+  }
+
+  if (interviewLink) {
+    parts.push(`Lien : ${interviewLink}`);
+  }
+
+  return parts.join(" ");
+};
+
 const updateApplicationInterview = async (req, res) => {
   try {
     const { id } = req.params;
@@ -455,7 +470,11 @@ const updateApplicationInterview = async (req, res) => {
         await createNotification({
           recipientId: candidateId,
           title: "Entretien planifie",
-          message: `Votre entretien pour le sujet "${updatedApplication.subject.title}" a ete planifie.`,
+          message: buildInterviewNotificationMessage({
+            subjectTitle: updatedApplication.subject.title,
+            interviewAt: updatedApplication.interviewAt,
+            interviewLink: updatedApplication.interviewLink,
+          }),
           type: "APPLICATION_INTERVIEW",
         });
 
@@ -969,29 +988,6 @@ const cancelAffectation = async (req, res) => {
       }
     }
 
-    for (const rejectedApplication of result.autoRejectedApplications) {
-      const rejectedCandidateIds = getCandidateIds(rejectedApplication);
-
-      for (const candidateId of rejectedCandidateIds) {
-        try {
-          await createNotification({
-            recipientId: candidateId,
-            title: "Candidature refusée",
-            message: `Votre candidature au sujet "${updatedApplication.subject.title}" a été refusée car un étudiant de votre faculté travaille déjà sur ce sujet.`,
-            type: "APPLICATION_REJECTED",
-          });
-
-          await createInfoPageAlert({
-            userId: candidateId,
-            pageKey: "applications",
-            refId: rejectedApplication.id,
-          });
-        } catch (notificationError) {
-          console.error("Auto-reject notification error:", notificationError);
-        }
-      }
-    }
-
     await createAuditLog({
       actorId: req.user.id,
       action: "AFFECTATION_CANCEL",
@@ -1006,24 +1002,6 @@ const cancelAffectation = async (req, res) => {
         candidates: getCandidateSummary(updatedApplication),
       },
     });
-
-    if (result.autoRejectedApplications.length > 0) {
-      await createAuditLog({
-        actorId: req.user.id,
-        action: "APPLICATION_AUTO_REJECT_SAME_FACULTY",
-        entity: "APPLICATION",
-        entityId: updatedApplication.id,
-        details: {
-          acceptedApplicationId: updatedApplication.id,
-          subjectId: updatedApplication.subjectId,
-          subjectTitle: updatedApplication.subject.title,
-          faculties: acceptedFaculties,
-          rejectedApplicationIds: result.autoRejectedApplications.map(
-            (rejectedApplication) => rejectedApplication.id
-          ),
-        },
-      });
-    }
 
     await cleanupInactiveConversations();
 

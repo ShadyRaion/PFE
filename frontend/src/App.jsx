@@ -3,6 +3,8 @@ import { ArrowRight, GraduationCap, Briefcase, FileText, BookMarked, ClipboardLi
 import CatalogueSubjects from "./features/subjects/CatalogueSubjects";
 import Login from "./features/auth/Login";
 import Register from "./features/auth/Register";
+import PasswordResetRequest from "./features/auth/PasswordResetRequest";
+import PasswordResetConfirm from "./features/auth/PasswordResetConfirm";
 import MonCV from "./features/cv/MonCV";
 import AcademicReport from "./features/academic-report/AcademicReport";
 import SubjectDetails from "./features/subjects/SubjectDetails";
@@ -38,6 +40,7 @@ import AdminSubjectDetails from "./features/admin/AdminSubjectDetails";
 import AdminUserDetails from "./features/admin/AdminUserDetails";
 import SupervisorInterns from "./features/supervisors/SupervisorInterns";
 import AdminReports from "./features/admin/AdminReports";
+import AdminAcademicReports from "./features/admin/AdminAcademicReports";
 import CompletedAssignments from "./features/completed-assignments/CompletedAssignments";
 import BrandLogo from "./components/BrandLogo";
 import HeaderControls from "./components/HeaderControls";
@@ -47,7 +50,7 @@ function PlatformHome() {
     {
       icon: GraduationCap,
       title: "Intern Space",
-      text: "Access the student portal to manage your Resume, browse PFE subjects, and track your applications and messages.",
+      text: "Access the student portal to manage your Resume, browse final-year project subjects, and track your applications and messages.",
       to: "/intern",
       action: "Continue as intern",
     },
@@ -78,7 +81,7 @@ function PlatformHome() {
           </h1>
 
           <p className="mt-5 text-lg leading-8 text-slate-600 sm:text-xl">
-            A platform connecting PFE interns and supervisors through
+            A platform connecting interns and supervisors through
             subjects, applications, assignments, and conversations.
           </p>
         </section>
@@ -154,7 +157,7 @@ function StudentLanding() {
           </p>
 
           <h1 className="mt-4 text-5xl font-black leading-tight text-slate-950 sm:text-6xl">
-            Start your PFE journey with STB.
+            Start your intenship journey with STB.
           </h1>
 
           <p className="mt-6 max-w-xl text-lg leading-8 text-slate-600">
@@ -187,7 +190,7 @@ function StudentLanding() {
           </p>
 
           <h2 className="mt-2 text-3xl font-black text-slate-950">
-            Your full PFE journey in one place.
+            Your full intenship journey in one place.
           </h2>
 
           <div className="mt-6 space-y-3">
@@ -226,6 +229,8 @@ function App() {
 
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/forgot-password" element={<PasswordResetRequest />} />
+        <Route path="/reset-password" element={<PasswordResetConfirm />} />
 
         <Route path="/encadrant" element={<SupervisorLanding />} />
         <Route path="/encadrant/login" element={<SupervisorLogin />} />
@@ -312,6 +317,10 @@ function App() {
 
           <Route path="/admin/affectations" element={<AdminAffectations />} />
           <Route path="/admin/reports" element={<AdminReports />} />
+          <Route
+            path="/admin/academic-reports"
+            element={<AdminAcademicReports />}
+          />
           <Route
             path="/admin/completed-assignments"
             element={

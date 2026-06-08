@@ -22,6 +22,60 @@ const reverseFoldedTranslations = Object.fromEntries(
   Object.entries(translations).map(([english, french]) => [fold(french), english])
 );
 
+const frenchTermReplacements = [
+  [/\bm\u00e9moire final\b/gi, "final report"],
+  [/\brapport final\b/gi, "final report"],
+  [/\bIng\u00e9nieur\b/g, "Engineer"],
+  [/\bing\u00e9nieur\b/g, "engineer"],
+  [/\b\u00c9t\u00e9\b/g, "Summer internship"],
+  [/\b\u00e9t\u00e9\b/g, "summer internship"],
+  [/\bEncadrants\b/g, "Supervisors"],
+  [/\bencadrants\b/g, "supervisors"],
+  [/\bEncadrant\b/g, "Supervisor"],
+  [/\bencadrant\b/g, "supervisor"],
+  [/\bStagiaires\b/g, "Interns"],
+  [/\bstagiaires\b/g, "interns"],
+  [/\bStagiaire\b/g, "Intern"],
+  [/\bstagiaire\b/g, "intern"],
+  [/\bAffectations\b/g, "Assignments"],
+  [/\baffectations\b/g, "assignments"],
+  [/\bAffectation\b/g, "Assignment"],
+  [/\baffectation\b/g, "assignment"],
+  [/\bCandidatures\b/g, "Applications"],
+  [/\bcandidatures\b/g, "applications"],
+  [/\bCandidature\b/g, "Application"],
+  [/\bcandidature\b/g, "application"],
+  [/\bBin\u00f4mes\b/g, "Teams"],
+  [/\bbin\u00f4mes\b/g, "teams"],
+  [/\bBin\u00f4me\b/g, "Team"],
+  [/\bbin\u00f4me\b/g, "team"],
+  [/\bSujets\b/g, "Subjects"],
+  [/\bsujets\b/g, "subjects"],
+  [/\bSujet\b/g, "Subject"],
+  [/\bsujet\b/g, "subject"],
+  [/\bRapports\b/g, "Reports"],
+  [/\brapports\b/g, "reports"],
+  [/\bRapport\b/g, "Report"],
+  [/\brapport\b/g, "report"],
+];
+
+const replaceFrenchTermsInEnglish = (value) => {
+  let translated = value;
+
+  frenchTermReplacements.forEach(([pattern, replacement]) => {
+    translated = translated.replace(pattern, replacement);
+  });
+
+  translated = translated.replace(/\bPFE\b/g, (match, offset, fullText) => {
+    const prefix = fullText.slice(Math.max(0, offset - 20), offset);
+    return prefix.endsWith("Final-year project (")
+      ? match
+      : "Final-year project (PFE)";
+  });
+
+  return translated;
+};
+
 const translateText = (value, language) => {
   const leading = String(value).match(/^\s*/)?.[0] || "";
   const trailing = String(value).match(/\s*$/)?.[0] || "";
@@ -107,6 +161,9 @@ const translateText = (value, language) => {
       const match = folded.match(item.pattern);
       if (match) return `${leading}${item.build(match)}${trailing}`;
     }
+
+    const termTranslated = replaceFrenchTermsInEnglish(clean);
+    if (termTranslated !== clean) return `${leading}${termTranslated}${trailing}`;
 
     return value;
   }

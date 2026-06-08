@@ -274,7 +274,7 @@ function SubjectDetails() {
           <Card>
             <CardBody>
               <p className="text-xs font-black uppercase tracking-widest text-cyan-700">
-                PFE Subject
+                Final-year project subject
               </p>
               <h1 className="mt-2 text-3xl font-black leading-tight text-slate-950 sm:text-4xl">
                 {subject.title}

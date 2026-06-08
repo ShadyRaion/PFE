@@ -169,7 +169,7 @@ function AcademicReport() {
       <PageHeader
         icon={GraduationCap}
         title="Final report"
-        subtitle="Upload your mémoire final after completing your assignment."
+        subtitle="Upload your final report after completing your assignment."
       />
 
       <Card>

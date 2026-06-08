@@ -87,6 +87,7 @@ model User {
   blacklists    Blacklist[]
   pageAlerts    PageAlert[]
   academicReports AcademicReport[]
+  passwordResetTokens PasswordResetToken[]
 
   student1Binomes  Binome[] @relation("Student1Binomes")
   student2Binomes  Binome[] @relation("Student2Binomes")
@@ -99,6 +100,22 @@ model User {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model PasswordResetToken {
+  id String @id @default(uuid())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  tokenHash String @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([expiresAt])
 }
 
 model Subject {

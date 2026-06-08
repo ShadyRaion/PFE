@@ -760,7 +760,7 @@ function MySubjects() {
             description={
               archiveMode
                 ? "You have no archived subject."
-                : "Create your first PFE subject to get started."
+                : "Create your first final-year project subject to get started."
             }
           />
         )}

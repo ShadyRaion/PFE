@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Mail, Lock, AlertCircle, ArrowRight, ShieldCheck } from "lucide-react";
 import api from "../../api/axios";
 import BrandLogo from "../../components/BrandLogo";
@@ -122,6 +122,15 @@ function AdminLogin() {
                   />
                 </div>
               </Field>
+
+              <div className="text-right text-sm">
+                <Link
+                  to="/forgot-password"
+                  className="font-semibold text-cyan-700 hover:underline"
+                >
+                  Forgot password?
+                </Link>
+              </div>
 
               <Button
                 type="submit"

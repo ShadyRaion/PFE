@@ -1,9 +1,11 @@
 const bcrypt = require("bcryptjs");
+const { createHash, randomBytes } = require("crypto");
 const prisma = require("../config/prisma");
 const generateToken = require("../utils/generateToken");
 const { createNotification } = require("../services/notification.service");
 const { createActionPageAlert } = require("../services/pageAlert.service");
 const { createAuditLog } = require("../services/audit.service");
+const { sendPasswordResetEmail } = require("../services/mail.service");
 const { normalizeDepartment } = require("../utils/department");
 const {
   isEducationField,
@@ -22,6 +24,9 @@ const sanitizeUser = (user) => {
 };
 
 const MIN_PASSWORD_LENGTH = 8;
+const PASSWORD_RESET_TTL_MINUTES = 60;
+const PASSWORD_RESET_RESPONSE =
+  "If an account exists for this email, a password reset link has been sent.";
 
 const isPasswordTooShort = (password) =>
   typeof password !== "string" || password.length < MIN_PASSWORD_LENGTH;
@@ -45,6 +50,24 @@ const checkBlacklist = async (email) => {
 const makeToken = (user) => {
   return generateToken(user);
 };
+
+const hashResetToken = (token) =>
+  createHash("sha256").update(token).digest("hex");
+
+const getFrontendBaseUrl = () => {
+  const explicitUrl = process.env.FRONTEND_URL?.trim();
+  if (explicitUrl) return explicitUrl.replace(/\/+$/, "");
+
+  const firstCorsOrigin = (process.env.CORS_ORIGINS || "http://localhost:5173")
+    .split(",")
+    .map((origin) => origin.trim())
+    .find(Boolean);
+
+  return (firstCorsOrigin || "http://localhost:5173").replace(/\/+$/, "");
+};
+
+const buildPasswordResetUrl = (token) =>
+  `${getFrontendBaseUrl()}/reset-password?token=${encodeURIComponent(token)}`;
 
 const register = async (req, res) => {
   try {
@@ -463,6 +486,180 @@ const adminLogin = async (req, res) => {
   }
 };
 
+const requestPasswordReset = async (req, res) => {
+  try {
+    const { email } = req.body || {};
+
+    if (!email) {
+      return res.status(400).json({
+        message: "Email is required.",
+      });
+    }
+
+    const normalizedEmail = email.trim().toLowerCase();
+    const [blacklisted, user] = await Promise.all([
+      checkBlacklist(normalizedEmail),
+      prisma.user.findUnique({
+        where: {
+          email: normalizedEmail,
+        },
+      }),
+    ]);
+
+    if (!blacklisted && user) {
+      const rawToken = randomBytes(32).toString("hex");
+      const tokenHash = hashResetToken(rawToken);
+      const expiresAt = new Date(
+        Date.now() + PASSWORD_RESET_TTL_MINUTES * 60 * 1000
+      );
+
+      await prisma.$transaction([
+        prisma.passwordResetToken.updateMany({
+          where: {
+            userId: user.id,
+            usedAt: null,
+          },
+          data: {
+            usedAt: new Date(),
+          },
+        }),
+        prisma.passwordResetToken.create({
+          data: {
+            userId: user.id,
+            tokenHash,
+            expiresAt,
+          },
+        }),
+      ]);
+
+      const resetUrl = buildPasswordResetUrl(rawToken);
+
+      try {
+        await sendPasswordResetEmail({
+          to: user.email,
+          fullName: user.fullName,
+          resetUrl,
+        });
+      } catch (mailError) {
+        console.error("Password reset email error:", mailError);
+      }
+
+      await createAuditLog({
+        actorId: user.id,
+        action: "PASSWORD_RESET_REQUEST",
+        entity: "USER",
+        entityId: user.id,
+        details: {
+          email: user.email,
+          expiresAt,
+        },
+      });
+    }
+
+    return res.status(200).json({
+      message: PASSWORD_RESET_RESPONSE,
+    });
+  } catch (error) {
+    console.error("POST /auth/password-reset/request error:", error);
+
+    return res.status(500).json({
+      message: error.message || "Error while requesting password reset.",
+    });
+  }
+};
+
+const confirmPasswordReset = async (req, res) => {
+  try {
+    const { token, password, newPassword } = req.body || {};
+    const nextPassword = password || newPassword;
+
+    if (!token || !nextPassword) {
+      return res.status(400).json({
+        message: "Token and new password are required.",
+      });
+    }
+
+    if (isPasswordTooShort(nextPassword)) {
+      return res.status(400).json({
+        message: "Password must be at least 8 characters.",
+      });
+    }
+
+    const tokenHash = hashResetToken(token);
+    const resetToken = await prisma.passwordResetToken.findUnique({
+      where: {
+        tokenHash,
+      },
+      include: {
+        user: true,
+      },
+    });
+
+    if (
+      !resetToken ||
+      resetToken.usedAt ||
+      resetToken.expiresAt.getTime() < Date.now()
+    ) {
+      return res.status(400).json({
+        message: "Password reset link is invalid or expired.",
+      });
+    }
+
+    const hashedPassword = await bcrypt.hash(nextPassword, 10);
+
+    await prisma.$transaction([
+      prisma.user.update({
+        where: {
+          id: resetToken.userId,
+        },
+        data: {
+          password: hashedPassword,
+        },
+      }),
+      prisma.passwordResetToken.update({
+        where: {
+          id: resetToken.id,
+        },
+        data: {
+          usedAt: new Date(),
+        },
+      }),
+      prisma.passwordResetToken.updateMany({
+        where: {
+          userId: resetToken.userId,
+          usedAt: null,
+          id: {
+            not: resetToken.id,
+          },
+        },
+        data: {
+          usedAt: new Date(),
+        },
+      }),
+    ]);
+
+    await createAuditLog({
+      actorId: resetToken.userId,
+      action: "PASSWORD_RESET_CONFIRM",
+      entity: "USER",
+      entityId: resetToken.userId,
+      details: {
+        email: resetToken.user.email,
+      },
+    });
+
+    return res.status(200).json({
+      message: "Password has been reset successfully.",
+    });
+  } catch (error) {
+    console.error("POST /auth/password-reset/confirm error:", error);
+
+    return res.status(500).json({
+      message: error.message || "Error while resetting password.",
+    });
+  }
+};
+
 const me = async (req, res) => {
   try {
     return res.status(200).json({
@@ -483,5 +680,7 @@ module.exports = {
   supervisorRegister,
   supervisorLogin,
   adminLogin,
+  requestPasswordReset,
+  confirmPasswordReset,
   me,
 };

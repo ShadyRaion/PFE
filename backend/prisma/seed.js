@@ -808,7 +808,7 @@ async function createSubjects(catalog) {
       data: {
         title: subject.title,
         description: buildDescription(subject),
-        technologies: subject.technologies,
+        technologies: [],
         requiredSkills: subject.requiredSkills,
         duration: subject.duration,
         places: subject.places,

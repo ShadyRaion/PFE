@@ -51,7 +51,7 @@ function Login() {
           </h1>
 
           <p className="mt-6 max-w-xl text-lg leading-8 text-slate-600">
-            Log in to your intern space to manage your PFE journey, browse
+            Log in to your intern space to manage your intenship journey, browse
             subjects, and track applications.
           </p>
         </div>
@@ -117,6 +117,15 @@ function Login() {
                   />
                 </div>
               </Field>
+
+              <div className="text-right text-sm">
+                <Link
+                  to="/forgot-password"
+                  className="font-semibold text-cyan-700 hover:underline"
+                >
+                  Forgot password?
+                </Link>
+              </div>
 
               <Button
                 type="submit"

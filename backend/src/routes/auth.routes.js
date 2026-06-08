@@ -9,6 +9,8 @@ const {
   supervisorRegister,
   supervisorLogin,
   adminLogin,
+  requestPasswordReset,
+  confirmPasswordReset,
   me,
 } = require("../controllers/auth.controller");
 
@@ -19,6 +21,9 @@ router.post("/supervisor/register", supervisorRegister);
 router.post("/supervisor/login", supervisorLogin);
 
 router.post("/admin/login", adminLogin);
+
+router.post("/password-reset/request", requestPasswordReset);
+router.post("/password-reset/confirm", confirmPasswordReset);
 
 router.get("/me", authMiddleware, me);
 

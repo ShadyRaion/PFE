@@ -1,6 +1,8 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Bell, Clock, AlertCircle } from "lucide-react";
 import api from "../../api/axios";
+import { useLanguage } from "../../i18n/LanguageProvider";
+import { translateNotification } from "../../utils/notificationTranslations";
 import {
   PageHeader,
   Card,
@@ -10,6 +12,7 @@ import {
 } from "../../components/ui";
 
 function Notifications() {
+  const { language } = useLanguage();
   const [notifications, setNotifications] = useState([]);
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(true);
@@ -44,6 +47,14 @@ function Notifications() {
     queueMicrotask(fetchNotifications);
   }, [fetchNotifications]);
 
+  const visibleNotifications = useMemo(
+    () =>
+      notifications.map((notification) =>
+        translateNotification(notification, language)
+      ),
+    [notifications, language]
+  );
+
   return (
     <div className="space-y-6">
       <PageHeader
@@ -61,7 +72,7 @@ function Notifications() {
 
       {loading && <LoadingState label="Loading notifications..." />}
 
-      {!loading && notifications.length === 0 && (
+      {!loading && visibleNotifications.length === 0 && (
         <EmptyState
           icon={Bell}
           title="No notifications yet"
@@ -69,9 +80,9 @@ function Notifications() {
         />
       )}
 
-      {!loading && notifications.length > 0 && (
+      {!loading && visibleNotifications.length > 0 && (
         <section className="space-y-3">
-          {notifications.map((notification) => (
+          {visibleNotifications.map((notification) => (
             <Card
               key={notification.id}
               className="transition hover:shadow-card-hover"
